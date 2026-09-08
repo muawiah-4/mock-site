@@ -123,8 +123,8 @@ body {
 .hairline-grid {
   background-image: repeating-linear-gradient(
     90deg,
-    rgba(20, 23, 26, 0.05) 0,
-    rgba(20, 23, 26, 0.05) 1px,
+    rgba(20, 23, 26, 0.14) 0,
+    rgba(20, 23, 26, 0.14) 1px,
     transparent 1px,
     transparent 120px
   );
@@ -132,8 +132,8 @@ body {
 .hairline-grid-dark {
   background-image: repeating-linear-gradient(
     90deg,
-    rgba(255, 255, 255, 0.06) 0,
-    rgba(255, 255, 255, 0.06) 1px,
+    rgba(255, 255, 255, 0.15) 0,
+    rgba(255, 255, 255, 0.15) 1px,
     transparent 1px,
     transparent 120px
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import GhostHeading from "@/components/GhostHeading";
 import ProductPhoto from "@/components/ProductPhoto";
@@ -40,18 +40,25 @@ const PHOTOS = [
 ] as const;
 
 // Per-card scatter position, only applied from md up — below that the
-// cards fall back to a simple two-column flow so nothing overlaps.
+// cards fall back to a simple two-column flow so nothing overlaps. Z-index
+// is handled separately (see BASE_Z) so the featured card can actually
+// come to the front rather than just changing opacity/scale in place.
 const CARD_LAYOUT = [
-  "md:absolute md:left-[0%] md:top-0 md:w-64 md:z-20 lg:w-72",
-  "md:absolute md:left-[34%] md:top-[6%] md:w-44 md:z-10 lg:w-52",
-  "md:absolute md:left-auto md:right-[2%] md:top-[14%] md:w-56 md:z-30 lg:w-64",
-  "md:absolute md:left-[8%] md:top-auto md:bottom-0 md:w-40 md:z-10 lg:w-44",
-  "md:absolute md:left-auto md:right-[20%] md:top-auto md:bottom-[4%] md:w-48 md:z-20 lg:w-56",
+  "md:absolute md:left-[0%] md:top-0 md:w-64 lg:w-72",
+  "md:absolute md:left-[34%] md:top-[6%] md:w-44 lg:w-52",
+  "md:absolute md:left-auto md:right-[2%] md:top-[14%] md:w-56 lg:w-64",
+  "md:absolute md:left-[8%] md:top-auto md:bottom-0 md:w-40 lg:w-44",
+  "md:absolute md:left-auto md:right-[20%] md:top-auto md:bottom-[4%] md:w-48 lg:w-56",
 ];
 
-const TICK_COUNT = 8;
+// Resting stack order (matches the original visual layering); the
+// featured card jumps above all of these regardless of its resting z.
+const BASE_Z = [20, 10, 30, 10, 20];
+const FEATURED_Z = 40;
 
-/** Small radial "loading" tick — purely decorative, cycles on its own. */
+const TICK_COUNT = PHOTOS.length;
+
+/** Radial tick indicator — tracks which photo is currently featured. */
 function RadialIndicator({ activeTick }: { activeTick: number }) {
   const radius = 22;
   return (
@@ -83,14 +90,6 @@ function RadialIndicator({ activeTick }: { activeTick: number }) {
 
 export default function ScatteredGallery() {
   const [featured, setFeatured] = useState(0);
-  const [tick, setTick] = useState(0);
-
-  // Purely decorative — cycles the radial indicator's active tick, not
-  // tied to which photo is featured.
-  useEffect(() => {
-    const id = setInterval(() => setTick((t) => (t + 1) % TICK_COUNT), 2500);
-    return () => clearInterval(id);
-  }, []);
 
   const next = () => setFeatured((f) => (f + 1) % PHOTOS.length);
   const prev = () => setFeatured((f) => (f - 1 + PHOTOS.length) % PHOTOS.length);
@@ -125,6 +124,7 @@ export default function ScatteredGallery() {
               whileInView={{ opacity: 1, y: 0, rotate: photo.rotate }}
               viewport={{ once: true, margin: "-10%" }}
               transition={{ duration: 0.7, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] }}
+              style={{ zIndex: featured === i ? FEATURED_Z : BASE_Z[i] }}
               className={`relative ${i === 4 ? "col-span-2 mx-auto w-40 sm:col-span-1 sm:w-full" : "w-full"} ${CARD_LAYOUT[i]}`}
             >
               <motion.button
@@ -148,7 +148,7 @@ export default function ScatteredGallery() {
         </div>
 
         <div className="mt-10 flex flex-col items-center gap-6 md:mt-16">
-          <RadialIndicator activeTick={tick} />
+          <RadialIndicator activeTick={featured} />
 
           <div className="flex items-center gap-3">
             <button

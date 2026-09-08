@@ -20,7 +20,7 @@ const HEADLINE_STATS = [
 export default function Specs() {
   return (
     <section id="specs" className="tail-fade hairline-grid relative overflow-hidden px-6 py-28 md:px-10 md:py-36">
-      <GhostHeading tone="dark" align="right" className="-top-6 opacity-70 md:-top-10">
+      <GhostHeading tone="light" align="right" className="-top-6 opacity-70 md:-top-10">
         PRECISION
       </GhostHeading>
       <div className="relative mx-auto max-w-6xl">

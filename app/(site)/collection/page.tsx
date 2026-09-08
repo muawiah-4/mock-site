@@ -14,7 +14,7 @@ export default function CollectionPage() {
   return (
     <main>
       <section className="tail-fade hairline-grid relative overflow-hidden px-6 pb-16 pt-32 md:px-10 md:pb-20 md:pt-40">
-        <GhostHeading tone="dark" align="right" className="top-4 opacity-70 md:top-8">
+        <GhostHeading tone="light" align="right" className="top-4 opacity-70 md:top-8">
           COLLECTIONS
         </GhostHeading>
         <div className="relative mx-auto max-w-6xl">
