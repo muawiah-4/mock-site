@@ -118,6 +118,27 @@ body {
   outline-offset: 2px;
 }
 
+/* Thin repeating vertical rules — a restrained technical/blueprint texture
+   for section backgrounds that want a bit more structure than flat color. */
+.hairline-grid {
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(20, 23, 26, 0.05) 0,
+    rgba(20, 23, 26, 0.05) 1px,
+    transparent 1px,
+    transparent 120px
+  );
+}
+.hairline-grid-dark {
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.06) 0,
+    rgba(255, 255, 255, 0.06) 1px,
+    transparent 1px,
+    transparent 120px
+  );
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

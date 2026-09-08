@@ -1,3 +1,6 @@
+import GhostHeading from "@/components/GhostHeading";
+import StatRow from "@/components/StatRow";
+
 const SPECS = [
   { label: "Movement", value: "Swiss Automatic, Powermatic 80" },
   { label: "Power reserve", value: "Up to 80 hours" },
@@ -7,10 +10,20 @@ const SPECS = [
   { label: "Bracelet", value: "Integrated steel, quick-release" },
 ];
 
+const HEADLINE_STATS = [
+  { value: "138", label: "Components, hand-assembled" },
+  { value: "80h", label: "Power reserve" },
+  { value: "100m", label: "Water resistance" },
+  { value: "1853", label: "Swiss made since" },
+];
+
 export default function Specs() {
   return (
-    <section id="specs" className="tail-fade relative px-6 py-28 md:px-10 md:py-36">
-      <div className="mx-auto max-w-6xl">
+    <section id="specs" className="tail-fade hairline-grid relative overflow-hidden px-6 py-28 md:px-10 md:py-36">
+      <GhostHeading tone="dark" align="right" className="-top-6 opacity-70 md:-top-10">
+        PRECISION
+      </GhostHeading>
+      <div className="relative mx-auto max-w-6xl">
       <div className="mb-14 max-w-xl">
         <div className="mb-3 text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--navy)]">
           Specifications
@@ -18,6 +31,10 @@ export default function Specs() {
         <h3 className="text-gradient text-[clamp(1.8rem,3.4vw,2.6rem)] font-semibold leading-tight tracking-tight">
           Every figure earned on the bench, not the brief.
         </h3>
+      </div>
+
+      <div className="mb-14 border-y border-black/[0.08] py-8">
+        <StatRow stats={HEADLINE_STATS} tone="dark" />
       </div>
 
       <div className="grid grid-cols-1 gap-px overflow-hidden rounded-3xl bg-black/[0.06] sm:grid-cols-2 lg:grid-cols-3">

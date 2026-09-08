@@ -61,10 +61,10 @@ export default function StorySections() {
           className="mx-auto grid max-w-6xl scroll-mt-24 grid-cols-1 items-center gap-10 px-6 py-20 md:grid-cols-2 md:gap-16 md:py-28"
         >
           <motion.div
-            initial={{ opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 28, filter: "grayscale(1)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "grayscale(0)" }}
             viewport={{ once: true, margin: "-15%" }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
             className={`aspect-[4/3] overflow-hidden rounded-3xl shadow-[0_30px_80px_-40px_rgba(20,23,26,0.45)] ${
               i % 2 === 1 ? "md:order-2" : ""
             }`}

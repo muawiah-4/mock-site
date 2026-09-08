@@ -3,6 +3,7 @@ import Link from "next/link";
 import { COLLECTIONS } from "@/lib/catalog";
 import CollectionGrid from "@/components/CollectionGrid";
 import Footer from "@/components/Footer";
+import GhostHeading from "@/components/GhostHeading";
 
 export const metadata: Metadata = {
   title: "All Collections — TISSOT",
@@ -12,8 +13,11 @@ export const metadata: Metadata = {
 export default function CollectionPage() {
   return (
     <main>
-      <section className="tail-fade px-6 pb-16 pt-32 md:px-10 md:pb-20 md:pt-40">
-        <div className="mx-auto max-w-6xl">
+      <section className="tail-fade hairline-grid relative overflow-hidden px-6 pb-16 pt-32 md:px-10 md:pb-20 md:pt-40">
+        <GhostHeading tone="dark" align="right" className="top-4 opacity-70 md:top-8">
+          COLLECTIONS
+        </GhostHeading>
+        <div className="relative mx-auto max-w-6xl">
           <div className="mb-3 text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--navy)]">
             All Collections
           </div>

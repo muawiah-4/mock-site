@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import ProductPhoto from "@/components/ProductPhoto";
+import GhostHeading from "@/components/GhostHeading";
 
 const NEWS = [
   {
@@ -82,8 +83,11 @@ export default function NewsCarousel() {
   }, []);
 
   return (
-    <section className="bg-[#0a0a0b] py-20 md:py-28">
-      <div className="mx-auto max-w-3xl px-6 text-center">
+    <section className="hairline-grid-dark relative overflow-hidden bg-[#0a0a0b] py-20 md:py-28">
+      <GhostHeading tone="light" align="left" className="-top-4 opacity-50 md:top-0">
+        PRESS
+      </GhostHeading>
+      <div className="relative mx-auto max-w-3xl px-6 text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

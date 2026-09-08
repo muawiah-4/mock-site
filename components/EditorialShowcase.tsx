@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import ProductPhoto from "@/components/ProductPhoto";
+import GhostHeading from "@/components/GhostHeading";
 
 const CARDS = [
   {
@@ -27,8 +28,11 @@ const CARDS = [
 
 export default function EditorialShowcase() {
   return (
-    <section className="bg-[#0a0a0b] px-6 py-20 md:py-28">
-      <div className="mx-auto max-w-6xl">
+    <section className="hairline-grid-dark relative overflow-hidden bg-[#0a0a0b] px-6 py-20 md:py-28">
+      <GhostHeading tone="light" align="center" className="top-6 opacity-60 md:top-10">
+        DISCIPLINE
+      </GhostHeading>
+      <div className="relative mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
