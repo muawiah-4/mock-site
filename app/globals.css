@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-0: #d7dadc;
+  --bg-1: #c7cbcd;
+  --ink-900: #14171a;
+  --ink-600: rgba(20, 23, 26, 0.62);
+  --ink-400: rgba(20, 23, 26, 0.4);
+  --navy: #1c3f5e;
+  --navy-light: #3f7ab0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: #9ba0a3;
+  color: var(--ink-900);
+  overscroll-behavior-y: none;
+  font-feature-settings: "ss01" on, "cv01" on;
+}
+
+.viewport-vignette {
+  background: radial-gradient(
+    120% 95% at 50% 36%,
+    #dfe1e2 0%,
+    #cdd0d2 42%,
+    #b3b8ba 74%,
+    #9ba0a3 100%
+  );
+}
+
+.tail-fade {
+  background: linear-gradient(180deg, #7d8386 0%, #a7acaf 30%, #c7cbcd 60%, #d7dadc 100%);
+}
+
+::selection {
+  background: var(--navy);
+  color: white;
+}
+
+.text-gradient {
+  background: linear-gradient(180deg, #1a1d20 0%, #14171a 55%, var(--navy) 130%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hairline {
+  background: linear-gradient(90deg, transparent, rgba(20, 23, 26, 0.16), transparent);
+  height: 1px;
+  width: 100%;
+}
+
+.glass-nav {
+  background: rgba(215, 218, 220, 0.55);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #1c3f5e 0%, #3f7ab0 100%);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset, 0 8px 24px -8px rgba(28, 63, 94, 0.55);
+}
+
+.btn-ghost {
+  border: 1px solid rgba(20, 23, 26, 0.16);
+  background: rgba(255, 255, 255, 0.35);
+}
+
+@media (max-width: 640px) {
+  .story-copy {
+    text-align: center !important;
+    align-items: center !important;
+  }
+}
+
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.section-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 0 1.5rem;
+}
+.section-divider .line {
+  height: 1px;
+  width: 100%;
+  max-width: 8rem;
+  background: linear-gradient(90deg, transparent, rgba(20, 23, 26, 0.14), transparent);
+}
+.section-divider .mark {
+  width: 5px;
+  height: 5px;
+  border-radius: 9999px;
+  background: var(--navy);
+  opacity: 0.55;
+  flex-shrink: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--navy);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
