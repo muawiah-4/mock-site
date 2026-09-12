@@ -15,7 +15,7 @@ export default function Experience({ children }: { children?: ReactNode }) {
   const stickyRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imagesRef = useRef<HTMLImageElement[]>([]);
-  const currentFrameRef = useRef<number>(1);
+  const currentFrameRef = useRef<number>(frameForProgress(0));
   const [loaded, setLoaded] = useState(0);
   const [ready, setReady] = useState(false);
 
@@ -130,17 +130,20 @@ export default function Experience({ children }: { children?: ReactNode }) {
     return () => window.removeEventListener("resize", resizeCanvas);
   }, [resizeCanvas]);
 
-  useEffect(() => {
-    if (ready) {
-      resizeCanvas();
-      drawFrame(currentFrameRef.current);
-    }
-  }, [ready, resizeCanvas, drawFrame]);
-
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"],
   });
+
+  useEffect(() => {
+    if (ready) {
+      const frame = frameForProgress(scrollYProgress.get());
+      currentFrameRef.current = frame;
+      resizeCanvas();
+      drawFrame(frame);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, resizeCanvas, drawFrame]);
 
   useMotionValueEvent(scrollYProgress, "change", (v) => {
     const frame = frameForProgress(v);

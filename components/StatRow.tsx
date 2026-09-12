@@ -9,20 +9,34 @@ export type Stat = { value: string; label: string };
  * treatment: the number carries the section, the label sits small beneath
  * it. Each stat reveals with a short delayed stagger on scroll-in.
  */
-export default function StatRow({ stats, tone = "dark" }: { stats: Stat[]; tone?: "dark" | "light" }) {
+export default function StatRow({
+  stats,
+  tone = "dark",
+  columns = 4,
+}: {
+  stats: Stat[];
+  tone?: "dark" | "light";
+  /** 4 (default) assumes a full-bleed row and only narrows to 2 columns
+   *  below the `sm` breakpoint. Pass 2 when the row itself is confined to
+   *  a half-width column (e.g. beside a photo) so it never grows past the
+   *  space it actually has, at any viewport width. */
+  columns?: 2 | 4;
+}) {
   const valueColor = tone === "dark" ? "text-[var(--ink-900)]" : "text-white";
   const labelColor = tone === "dark" ? "text-[var(--ink-400)]" : "text-white/50";
   const dividerColor = tone === "dark" ? "border-black/[0.08]" : "border-white/[0.12]";
+  const gridClass = columns === 2 ? "grid-cols-2" : "grid-cols-2 sm:grid-cols-4";
+  const valueSize = columns === 2 ? "clamp(1.6rem, 3.2vw, 2.4rem)" : "clamp(2.2rem, 5vw, 3.6rem)";
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4">
+    <div className={`grid ${gridClass}`}>
       {stats.map((s, i) => {
         // A plain `divide-x` isn't row-aware: on the 2-col mobile wrap it
         // still borders the 3rd item (first in its own row), producing a
         // stray rule that doesn't align to any real column boundary. Key
         // the border to each breakpoint's actual row position instead.
         const baseBorder = i % 2 === 1 ? "border-l" : "";
-        const smBorder = i === 0 ? "sm:border-l-0" : "sm:border-l";
+        const smBorder = columns === 4 ? (i === 0 ? "sm:border-l-0" : "sm:border-l") : "";
         return (
           <motion.div
             key={s.label}
@@ -32,7 +46,7 @@ export default function StatRow({ stats, tone = "dark" }: { stats: Stat[]; tone?
             transition={{ duration: 0.6, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
             className={`${baseBorder} ${smBorder} ${dividerColor} px-4 py-2 first:pl-0 sm:px-6`}
           >
-            <div className={`font-black leading-none tracking-tight ${valueColor}`} style={{ fontSize: "clamp(2.2rem, 5vw, 3.6rem)" }}>
+            <div className={`font-black leading-none tracking-tight ${valueColor}`} style={{ fontSize: valueSize }}>
               {s.value}
             </div>
             <div className={`mt-2 text-[11px] uppercase tracking-[0.16em] ${labelColor}`}>{s.label}</div>

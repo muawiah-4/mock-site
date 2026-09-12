@@ -7,17 +7,24 @@ export function frameSrc(index: number): string {
 
 /**
  * Scroll-progress (0-1) to frame-number breakpoints, hand-tuned against the
- * source footage: it opens already exploded, holds while components drift,
- * snaps together around 58-82%, then holds on the reassembled hero shot.
+ * source footage. The raw footage itself plays exploded -> assembled as its
+ * frame number increases (it opens already exploded, holds while components
+ * drift, then snaps together into the reassembled hero shot around frame
+ * 152-240) — the reverse of the story this site tells. We play the footage
+ * backwards instead: the watch holds fully assembled at the top of the page,
+ * begins separating as you scroll, passes through the dramatic case-opening
+ * break around the midpoint, and holds on the fully exploded technical
+ * composition by the end — so scrolling down disassembles the watch and
+ * scrolling back up reassembles it.
  */
 export const FRAME_BREAKPOINTS: { p: number; f: number }[] = [
-  { p: 0, f: 1 },
-  { p: 0.1, f: 14 },
-  { p: 0.34, f: 92 },
-  { p: 0.58, f: 126 },
-  { p: 0.66, f: 152 },
-  { p: 0.82, f: 173 },
-  { p: 1, f: 240 },
+  { p: 0, f: 240 },
+  { p: 0.18, f: 173 },
+  { p: 0.34, f: 152 },
+  { p: 0.42, f: 126 },
+  { p: 0.66, f: 92 },
+  { p: 0.9, f: 14 },
+  { p: 1, f: 1 },
 ];
 
 export function frameForProgress(progress: number): number {
@@ -39,7 +46,10 @@ export type StoryBeat = {
   range: [number, number];
   align: "center" | "left" | "right";
   eyebrow?: string;
-  headline: string;
+  /** Omit entirely to render no card for this beat's range — used for the
+   *  final stretch of the exploded-view scroll, where the diagram itself
+   *  is the payoff and nothing should sit on top of it. */
+  headline?: string;
   body?: string[];
   cta?: { primary: string; secondary?: string };
   micro?: string;
@@ -48,7 +58,7 @@ export type StoryBeat = {
 export const STORY_BEATS: StoryBeat[] = [
   {
     id: "hero",
-    range: [0, 0.1],
+    range: [0, 0.15],
     align: "center",
     eyebrow: "TISSOT — PRX",
     headline: "Every second, engineered in the open.",
@@ -58,7 +68,7 @@ export const STORY_BEATS: StoryBeat[] = [
   },
   {
     id: "engineering",
-    range: [0.1, 0.34],
+    range: [0.15, 0.34],
     align: "left",
     eyebrow: "Construction",
     headline: "Precision, laid bare.",
@@ -69,7 +79,7 @@ export const STORY_BEATS: StoryBeat[] = [
   },
   {
     id: "movement",
-    range: [0.34, 0.44],
+    range: [0.34, 0.42],
     align: "right",
     eyebrow: "The movement",
     headline: "Built to outlast the trend it started.",
@@ -80,7 +90,7 @@ export const STORY_BEATS: StoryBeat[] = [
   },
   {
     id: "stress-test",
-    range: [0.44, 0.62],
+    range: [0.42, 0.62],
     align: "center",
     eyebrow: "Stress Tested",
     headline: "Pushed apart on purpose.",
@@ -92,18 +102,15 @@ export const STORY_BEATS: StoryBeat[] = [
     id: "convergence",
     range: [0.62, 0.82],
     align: "center",
-    eyebrow: "Assembly",
-    headline: "Engineered to come together.",
-    body: ["In an instant — tolerances so tight the whole case reseats itself."],
+    eyebrow: "Full Disassembly",
+    headline: "Every layer, laid open.",
+    body: [
+      "At full extension, 138 components hold their exact relationship to one another — nothing hidden, nothing decorative.",
+    ],
   },
   {
     id: "reveal",
     range: [0.82, 1],
     align: "center",
-    eyebrow: "PRX",
-    headline: "Time, perfected.",
-    body: ["Heritage design, re-engineered for today. Swiss made since 1853."],
-    cta: { primary: "Discover PRX", secondary: "See full specs" },
-    micro: "Available in steel, two-tone, and PVD finishes.",
   },
 ];

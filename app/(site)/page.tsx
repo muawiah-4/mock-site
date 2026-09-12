@@ -2,6 +2,7 @@ import Experience from "@/components/Experience";
 import BlueDialExperience from "@/components/BlueDialExperience";
 import StorySections from "@/components/StorySections";
 import FlagshipShowcase from "@/components/FlagshipShowcase";
+import LifestyleMoment from "@/components/LifestyleMoment";
 import TechnicalExploration from "@/components/TechnicalExploration";
 import Configurator from "@/components/Configurator";
 import Specs from "@/components/Specs";
@@ -24,6 +25,8 @@ export default function Home() {
       <StorySections />
       <SectionDivider />
       <FlagshipShowcase />
+
+      <LifestyleMoment />
 
       <TechnicalExploration />
 
