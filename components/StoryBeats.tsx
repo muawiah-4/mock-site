@@ -1,9 +1,9 @@
 "use client";
 
 import { motion, useMotionTemplate, useTransform, type MotionValue } from "framer-motion";
-import Link from "next/link";
 import { STORY_BEATS, type StoryBeat } from "@/lib/frames";
 import { useScrollControl } from "@/lib/scroll-context";
+import MagneticButton from "@/components/MagneticButton";
 
 /**
  * Adjacent beats share a boundary point (this beat's range end === the next
@@ -92,17 +92,17 @@ function Beat({
         ? "items-start pt-[20vh]"
         : beat.id === "convergence"
           ? "items-end pb-[16vh]"
-          : beat.id === "reveal"
-            ? "items-center pt-16"
-            : "items-center";
-  // The desktop chapter rail is pinned at the right edge (see ExplodedTimeline) —
-  // reserve its width so a right- or center-aligned card never slides underneath it.
-  const railClearance = beat.align !== "left" ? "lg:pr-64" : "";
+          : "items-center";
+  // Beats with no headline (e.g. the final stretch of the exploded-view
+  // scroll) are intentionally content-free — the technical diagram is the
+  // payoff there and shouldn't have a card sitting on top of it. The hooks
+  // above still need to run unconditionally, so this check comes last.
+  if (!beat.headline) return null;
 
   return (
     <motion.div
       style={{ opacity, filter: cardFilter }}
-      className={`story-copy pointer-events-none absolute inset-0 flex ${justify} ${verticalClass} px-6 md:px-16 lg:px-24 ${railClearance}`}
+      className={`story-copy pointer-events-none absolute inset-0 flex ${justify} ${verticalClass} px-6 md:px-16 lg:px-24`}
     >
       <motion.div
         style={{ x: slide, y: rise, scale: cardScale }}
@@ -152,12 +152,13 @@ function Beat({
 
           {beat.cta && (
             <div className="pointer-events-auto mt-7 flex flex-wrap items-center gap-4 justify-center">
-              <Link
+              <MagneticButton
                 href="/collection"
-                className="btn-primary rounded-full px-7 py-3 text-[14px] font-medium text-white transition-transform hover:scale-[1.03] active:scale-[0.98]"
+                strength={10}
+                className="btn-primary inline-block rounded-full px-7 py-3 text-[14px] font-medium text-white transition-transform hover:scale-[1.03] active:scale-[0.98]"
               >
                 {beat.cta.primary}
-              </Link>
+              </MagneticButton>
               {beat.cta.secondary && (
                 <a
                   href="#specs"
@@ -199,7 +200,7 @@ function ScrollCue() {
   return (
     <motion.div
       style={{ opacity }}
-      className="pointer-events-none absolute inset-x-0 bottom-8 flex flex-col items-center gap-2 text-[var(--ink-400)]"
+      className="pointer-events-none absolute inset-x-0 bottom-8 hidden flex-col items-center gap-2 text-[var(--ink-400)] lg:flex"
     >
       <span className="text-[10px] uppercase tracking-[0.32em]">Scroll</span>
       <span className="h-8 w-px bg-current opacity-40" />

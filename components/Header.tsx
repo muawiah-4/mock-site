@@ -10,7 +10,6 @@ import SearchOverlay from "@/components/SearchOverlay";
 
 const PLAIN_LINKS = [
   { label: "Heritage", href: "/#craftsmanship" },
-  { label: "Technology", href: "/#movement" },
   { label: "Store Locator", href: "/#stores" },
 ];
 

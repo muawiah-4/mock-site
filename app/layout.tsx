@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "sw
 export const metadata: Metadata = {
   title: "TISSOT PRX — Every second, engineered in the open.",
   description:
-    "The TISSOT PRX, explored: a scroll-driven exploded-view construction story, an interactive 3D viewer, a live configurator, and the full PRX collection.",
+    "The TISSOT PRX, explored: a scroll-driven exploded-view construction story, a hands-on case viewer, a live configurator, and the full PRX collection.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
