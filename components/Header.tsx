@@ -8,10 +8,7 @@ import { COLLECTIONS } from "@/lib/catalog";
 import { useCart } from "@/lib/cart-context";
 import SearchOverlay from "@/components/SearchOverlay";
 
-const PLAIN_LINKS = [
-  { label: "Heritage", href: "/#craftsmanship" },
-  { label: "Store Locator", href: "/#stores" },
-];
+const PLAIN_LINKS = [{ label: "Store Locator", href: "/#stores" }];
 
 export default function Header() {
   const pathname = usePathname();
