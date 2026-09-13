@@ -86,43 +86,8 @@ const CARD_LAYOUT = [
 const BASE_Z = [20, 10, 30, 10, 15, 15, 20, 12];
 const FEATURED_Z = 40;
 
-const TICK_COUNT = PHOTOS.length;
-
-/** Radial tick indicator — tracks which photo is currently featured. */
-function RadialIndicator({ activeTick }: { activeTick: number }) {
-  const radius = 22;
-  return (
-    <div aria-hidden className="relative h-14 w-14 shrink-0">
-      {Array.from({ length: TICK_COUNT }).map((_, i) => {
-        const angle = (i * 360) / TICK_COUNT;
-        const rad = (angle * Math.PI) / 180;
-        const x = Math.sin(rad) * radius;
-        const y = -Math.cos(rad) * radius;
-        const isActive = i === activeTick;
-        return (
-          <span
-            key={i}
-            className="absolute left-1/2 top-1/2 h-2.5 w-[2px] rounded-full transition-colors duration-300"
-            style={{
-              transform: `translate(${x - 1}px, ${y - 5}px) rotate(${angle}deg)`,
-              backgroundColor: isActive ? "var(--navy)" : "rgba(20, 23, 26, 0.18)",
-            }}
-          />
-        );
-      })}
-      <span
-        className="absolute left-1/2 top-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-[2px]"
-        style={{ backgroundColor: "var(--navy)" }}
-      />
-    </div>
-  );
-}
-
 export default function ScatteredGallery() {
   const [featured, setFeatured] = useState(0);
-
-  const next = () => setFeatured((f) => (f + 1) % PHOTOS.length);
-  const prev = () => setFeatured((f) => (f - 1 + PHOTOS.length) % PHOTOS.length);
 
   return (
     <section id="gallery" className="relative overflow-hidden bg-[var(--bg-0)] px-6 py-20 md:py-28">
@@ -187,28 +152,6 @@ export default function ScatteredGallery() {
           ))}
         </div>
 
-        <div className="mt-10 flex flex-col items-center gap-6 md:mt-16">
-          <RadialIndicator activeTick={featured} />
-
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={prev}
-              aria-label="Previous photo"
-              className="flex h-9 items-center justify-center rounded-full border border-[var(--ink-400)] px-4 text-[var(--ink-900)] transition hover:border-[var(--navy)] hover:text-[var(--navy)]"
-            >
-              <span aria-hidden>‹</span>
-            </button>
-            <button
-              type="button"
-              onClick={next}
-              aria-label="Next photo"
-              className="flex h-9 items-center justify-center rounded-full border border-[var(--ink-400)] px-4 text-[var(--ink-900)] transition hover:border-[var(--navy)] hover:text-[var(--navy)]"
-            >
-              <span aria-hidden>›</span>
-            </button>
-          </div>
-        </div>
       </div>
     </section>
   );

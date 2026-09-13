@@ -5,7 +5,6 @@ import FlagshipShowcase from "@/components/FlagshipShowcase";
 import LifestyleMoment from "@/components/LifestyleMoment";
 import TechnicalExploration from "@/components/TechnicalExploration";
 import Configurator from "@/components/Configurator";
-import Specs from "@/components/Specs";
 import EditorialShowcase from "@/components/EditorialShowcase";
 import ScatteredGallery from "@/components/ScatteredGallery";
 import CollectionGrid from "@/components/CollectionGrid";
@@ -32,7 +31,6 @@ export default function Home() {
 
       <SectionDivider />
       <Configurator />
-      <Specs />
 
       <ScatteredGallery />
 

@@ -2,36 +2,43 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import ProductPhoto from "@/components/ProductPhoto";
 import GhostHeading from "@/components/GhostHeading";
 
+/**
+ * This used to just be the product catalog again — plain white flat-lay
+ * photos with product-launch blurbs, identical to every other section on
+ * the site. Real press coverage doesn't look like a shop grid: it's
+ * campaign photography, milestones, and the occasional engineering
+ * explainer, not another studio shot of the watch itself. Cards with no
+ * `image` render as a stat/milestone card instead of forcing a photo that
+ * doesn't exist.
+ */
 const NEWS = [
   {
-    title: "PRX Powermatic 80: Every second, engineered in the open",
-    date: "Sep 6, 2026",
-    image: "/watches/prx-blue-powermatic-flat.jpg",
+    title: "Tissot Sprint highlights: Red Bull Grand Prix of San Marino and the Rimini Riviera",
+    date: "Sep 12, 2026",
+    source: "motogp.com",
+    image: "/news/motogp-banner.jpg",
   },
   {
-    title: "Seastar 1000 Chronograph: Built for depth, styled for the surface",
-    date: "Aug 22, 2026",
-    image: "/watches/seastar-1000-chrono.jpg",
+    title: "Vote for your TISSOT MVP and win a watch",
+    date: "Sep 8, 2026",
+    source: "FIBA",
+    image: "/news/fiba-mvp-lineup.jpg",
   },
   {
-    title: "T-Touch Connect Solar: Power that never runs out",
+    title: "Chanel Appoints Hélène de Tissot CFO",
+    date: "Aug 11, 2026",
+    source: "The Business of Fashion",
+    image: "/news/tissot-cfo-portrait.jpg",
+  },
+  {
+    title: "Over 170 years of Swiss watchmaking",
     date: "Jul 30, 2026",
-    image: "/watches/t-touch-connect.jpg",
+    stat: "1853",
+    statLabel: "The year Tissot began, in Le Locle, Switzerland",
   },
-  {
-    title: "Everytime 30: The quiet argument for less",
-    date: "Jun 14, 2026",
-    image: "/watches/everytime-30.jpg",
-  },
-  {
-    title: "Gentleman Powermatic 80 Silicium: Precision, refined",
-    date: "May 10, 2026",
-    image: "/watches/gentleman-powermatic-80.jpg",
-  },
-];
+] as const;
 
 export default function NewsCarousel() {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -136,9 +143,30 @@ export default function NewsCarousel() {
               <motion.div
                 animate={{ opacity: active === i ? 1 : 0.35, scale: active === i ? 1 : 0.94 }}
                 transition={{ duration: 0.4 }}
-                className="aspect-[16/10] overflow-hidden rounded-2xl"
+                className="relative aspect-[16/10] overflow-hidden rounded-2xl"
               >
-                <ProductPhoto src={item.image} alt={item.title} padding="10%" />
+                {"image" in item ? (
+                  <>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
+                    {"source" in item && (
+                      <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full bg-black/50 px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.2em] text-white backdrop-blur-md">
+                        <span className="h-1.5 w-1.5 rounded-full bg-[var(--navy-light)]" />
+                        {item.source}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-[#141824] to-[#0a0a0b] px-8 text-center">
+                    <div
+                      className="font-black leading-none tracking-tight text-white"
+                      style={{ fontSize: "clamp(3rem, 8vw, 5.5rem)" }}
+                    >
+                      {item.stat}
+                    </div>
+                    <p className="mt-4 max-w-xs text-[13px] leading-relaxed text-white/50">{item.statLabel}</p>
+                  </div>
+                )}
               </motion.div>
             </div>
           ))}

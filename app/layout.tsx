@@ -13,7 +13,20 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={inter.variable}>
-      <body className="font-sans antialiased">{children}</body>
+      <body className="font-sans antialiased">
+        {/* Chrome restores the previous scroll position on a plain reload
+            by default, which fights the pinned scrollytelling hero — a
+            refresh should land back at the top, like a fresh visit, not
+            wherever the scroll happened to be. Runs before hydration so
+            there's no visible jump-then-correct. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; } window.scrollTo(0, 0);",
+          }}
+        />
+        {children}
+      </body>
     </html>
   );
 }
