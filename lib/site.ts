@@ -4,7 +4,7 @@ import type { Metadata } from "next";
  * Canonical origin for absolute URLs (canonicals, sitemap, JSON-LD, OG).
  * There's no production domain yet — set NEXT_PUBLIC_SITE_URL at deploy time.
  */
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/+$/, "");
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3002").replace(/\/+$/, "");
 
 export const SITE_NAME = "TISSOT PRX Concept";
 

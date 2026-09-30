@@ -1,9 +1,9 @@
-// Usage: npm run dev, then `[CHROME_PATH=...] [BASE_URL=http://localhost:3000] [QA_OUT_DIR=/tmp/prx-qa] [HEADFUL=1] node scripts/qa-screenshots.mjs`
+// Usage: npm run dev, then `[CHROME_PATH=...] [BASE_URL=http://localhost:3002] [QA_OUT_DIR=/tmp/prx-qa] [HEADFUL=1] node scripts/qa-screenshots.mjs`
 import puppeteer from "puppeteer-core";
 import fs from "node:fs";
 
 const OUT = process.env.QA_OUT_DIR || "/tmp/prx-qa";
-const BASE_URL = (process.env.BASE_URL || "http://localhost:3000").replace(/\/+$/, "");
+const BASE_URL = (process.env.BASE_URL || "http://localhost:3002").replace(/\/+$/, "");
 const CHROME_PATH =
   process.env.CHROME_PATH || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const HEADFUL = process.env.HEADFUL === "1";

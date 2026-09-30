@@ -14,7 +14,7 @@ afterEach(() => {
 describe("SITE_URL", () => {
   it("defaults to localhost when unset", async () => {
     const { SITE_URL } = await loadSite(undefined);
-    expect(SITE_URL).toBe("http://localhost:3000");
+    expect(SITE_URL).toBe("http://localhost:3002");
   });
 
   it.each(["https://prx.example", "https://prx.example/", "https://prx.example///"])(

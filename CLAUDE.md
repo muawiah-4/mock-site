@@ -19,9 +19,9 @@ Framer Motion 11 · Vitest 4 · ESLint 8 (next lint). Node per `.nvmrc` (22).
 
 ## Commands
 ```bash
-npm run dev -- -p 3002   # local dev runs on :3002 (script default is 3000)
+npm run dev              # local dev on :3002 (port 3000 is used by another project)
 npm run build
-npm start -- -p 3002     # serve production build (script pins -p 3000; override)
+npm start                # serve the production build on :3002
 npm run typecheck        # tsc --noEmit
 npm run lint             # next lint
 npm test                 # vitest run (tests/, node env)

@@ -17,7 +17,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3002](http://localhost:3002).
 
 Other scripts: `npm run build`, `npm run start`, `npm run lint`.
 
@@ -46,7 +46,7 @@ node scripts/qa-screenshots.mjs
 | Env var       | Default                                                         |
 | ------------- | --------------------------------------------------------------- |
 | `CHROME_PATH` | `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`  |
-| `BASE_URL`    | `http://localhost:3000`                                         |
+| `BASE_URL`    | `http://localhost:3002`                                         |
 | `QA_OUT_DIR`  | `/tmp/prx-qa`                                                   |
 | `HEADFUL`     | unset (headless); set `HEADFUL=1` to show the browser window    |
 
