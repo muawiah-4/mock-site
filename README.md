@@ -21,6 +21,34 @@ Open [http://localhost:3000](http://localhost:3000).
 
 Other scripts: `npm run build`, `npm run start`, `npm run lint`.
 
+## Quality checks
+
+CI (`.github/workflows/ci.yml`) runs these on every push and pull request to
+`main`, using the Node version in `.nvmrc`:
+
+```bash
+npm run typecheck   # tsc --noEmit
+npm run lint        # next lint
+npm run build       # next build
+```
+
+### Screenshot QA (optional, local)
+
+`scripts/qa-screenshots.mjs` drives an installed Chrome via `puppeteer-core`
+(no browser is downloaded) against a running dev server:
+
+```bash
+npm run dev   # in another terminal
+node scripts/qa-screenshots.mjs
+```
+
+| Env var       | Default                                                         |
+| ------------- | --------------------------------------------------------------- |
+| `CHROME_PATH` | `/Applications/Google Chrome.app/Contents/MacOS/Google Chrome`  |
+| `BASE_URL`    | `http://localhost:3000`                                         |
+| `QA_OUT_DIR`  | `/tmp/prx-qa`                                                   |
+| `HEADFUL`     | unset (headless); set `HEADFUL=1` to show the browser window    |
+
 ## What's here
 
 - **Scroll-sequence hero** (`components/Experience.tsx`) — a 240-frame canvas
