@@ -85,7 +85,7 @@ export const STORY_BEATS: StoryBeat[] = [
     headline: "Built to outlast the trend it started.",
     body: [
       "A Swiss automatic caliber, visible in every exploded layer of the case.",
-      "138 components, assembled and regulated by hand.",
+      "The Powermatic 80 — up to 80 hours of power reserve from a single full wind.",
     ],
   },
   {
@@ -105,7 +105,7 @@ export const STORY_BEATS: StoryBeat[] = [
     eyebrow: "Full Disassembly",
     headline: "Every layer, laid open.",
     body: [
-      "At full extension, 138 components hold their exact relationship to one another — nothing hidden, nothing decorative.",
+      "At full extension, every component holds its exact relationship to the next — nothing hidden, nothing decorative.",
     ],
     cta: { primary: "Explore the collection", secondary: "Configure yours" },
   },

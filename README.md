@@ -42,7 +42,6 @@ Other scripts: `npm run build`, `npm run start`, `npm run lint`.
 
 ```
 app/(site)/          Routes: home, /collection, /collection/[id], /watch/[slug]
-app/apogee/           Standalone reference/demo page
 components/           All UI components (one section/feature per file)
 lib/                  Catalog data, cart context, scroll context, frame data
 public/watches/       Product catalog photography
@@ -54,5 +53,12 @@ public/video/         Disassembly video used in Technical Exploration
 
 ## Notes
 
-Product photography and press coverage referenced in the News section are
-used for concept/demonstration purposes.
+This is an unofficial concept project. It is not affiliated with, endorsed
+by, or sponsored by Tissot SA or the Swatch Group. "Tissot", "PRX" and
+"Powermatic 80" are trademarks of their respective owners and are used here
+only to identify the subject of the concept.
+
+All product photography and press imagery (including the images in the News
+section) belongs to its respective owners and is used solely for
+non-commercial portfolio demonstration. Nothing on the site is for sale;
+prices, cart and checkout are simulated.

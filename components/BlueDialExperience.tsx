@@ -67,9 +67,6 @@ export default function BlueDialExperience() {
           <p className="text-[clamp(1.15rem,2.2vw,1.6rem)] italic leading-relaxed text-white/90">
             The best watches don&rsquo;t ask for attention. They just keep it.
           </p>
-          <div className="mt-5 text-[11px] font-medium uppercase tracking-[0.28em] text-white/50">
-            — Tissot
-          </div>
         </motion.div>
       </div>
     </section>

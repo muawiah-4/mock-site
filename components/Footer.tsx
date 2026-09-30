@@ -169,7 +169,9 @@ export default function Footer() {
             </div>
           </div>
 
-          <p className="text-[12px] text-white/55">Tissot Copyrights {new Date().getFullYear()}</p>
+          <p className="text-[12px] text-white/55">
+            &copy; {new Date().getFullYear()} Concept project &middot; Not affiliated with Tissot SA or the Swatch Group.
+          </p>
         </div>
       </div>
 

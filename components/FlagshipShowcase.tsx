@@ -21,7 +21,7 @@ export default function FlagshipShowcase() {
     { value: variant.specs.caseDiameter, label: "Case diameter" },
     { value: "80h", label: "Power reserve" },
     { value: variant.specs.waterResistance.split(" / ")[0], label: "Water resistance" },
-    { value: "138", label: "Hand-assembled parts" },
+    { value: "Sapphire", label: "Scratch-resistant crystal" },
   ];
 
   return (

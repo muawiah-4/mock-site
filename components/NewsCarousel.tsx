@@ -27,12 +27,6 @@ const NEWS = [
     image: "/news/fiba-mvp-lineup.jpg",
   },
   {
-    title: "Chanel Appoints Hélène de Tissot CFO",
-    date: "Aug 11, 2026",
-    source: "The Business of Fashion",
-    image: "/news/tissot-cfo-portrait.jpg",
-  },
-  {
     title: "Over 170 years of Swiss watchmaking",
     date: "Jul 30, 2026",
     stat: "1853",
