@@ -195,10 +195,14 @@ describe("cartReducer", () => {
       { slug: B, quantity: 2 },
     ]);
     expect(cartReducer(state, { type: "SET_QTY", slug: A, quantity: 1e9 }).lines[0].quantity).toBe(MAX_QTY);
-    expect(cartReducer(state, { type: "SET_QTY", slug: A, quantity: 0 }).lines[0].quantity).toBe(1);
-    expect(cartReducer(state, { type: "SET_QTY", slug: A, quantity: -2 }).lines[0].quantity).toBe(1);
     expect(cartReducer(state, { type: "SET_QTY", slug: A, quantity: 3.9 }).lines[0].quantity).toBe(3);
-    expect(cartReducer(state, { type: "SET_QTY", slug: A, quantity: NaN }).lines[0].quantity).toBe(1);
+    expect(cartReducer(state, { type: "SET_QTY", slug: A, quantity: NaN })).toBe(state);
+  });
+
+  it("SET_QTY below 1 removes the line (decrementing the last unit)", () => {
+    const state: CartState = { ...empty, lines: [{ slug: A, quantity: 1 }, { slug: B, quantity: 2 }] };
+    expect(cartReducer(state, { type: "SET_QTY", slug: A, quantity: 0 }).lines).toEqual([{ slug: B, quantity: 2 }]);
+    expect(cartReducer(state, { type: "SET_QTY", slug: A, quantity: -2 }).lines).toEqual([{ slug: B, quantity: 2 }]);
   });
 
   it("SET_QTY never creates a line for a slug that is not in the cart", () => {

@@ -68,10 +68,13 @@ export function cartReducer(state: CartState, action: CartAction): CartState {
     case "REMOVE":
       return { ...state, lines: state.lines.filter((l) => l.slug !== action.slug) };
     case "SET_QTY":
+      if (Number.isNaN(action.quantity)) return state;
       return {
         ...state,
-        lines: state.lines
-          .map((l) => (l.slug === action.slug ? { ...l, quantity: clampQty(action.quantity) } : l)),
+        // Decrementing below 1 removes the line, as the "−" button expects.
+        lines: action.quantity < 1
+          ? state.lines.filter((l) => l.slug !== action.slug)
+          : state.lines.map((l) => (l.slug === action.slug ? { ...l, quantity: clampQty(action.quantity) } : l)),
       };
     case "OPEN":
       return { ...state, isOpen: true };
