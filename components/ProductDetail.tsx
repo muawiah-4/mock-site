@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { WatchVariant } from "@/lib/catalog";
 import { CATALOG, getCollection, formatPrice } from "@/lib/catalog";
@@ -9,12 +9,23 @@ import { useCart } from "@/lib/cart-context";
 import Accordion from "@/components/Accordion";
 import ProductPhoto from "@/components/ProductPhoto";
 import MagneticButton from "@/components/MagneticButton";
+import { useDialogA11y } from "@/lib/use-dialog-a11y";
 
 export default function ProductDetail({ variant }: { variant: WatchVariant }) {
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const [zoomOpen, setZoomOpen] = useState(false);
   const { addToCart, open } = useCart();
+  const zoomRef = useRef<HTMLDivElement>(null);
+  const zoomCloseRef = useRef<HTMLButtonElement>(null);
+
+  useDialogA11y({
+    open: zoomOpen,
+    onClose: () => setZoomOpen(false),
+    containerRef: zoomRef,
+    initialFocusRef: zoomCloseRef,
+    lockScroll: true,
+  });
 
   const collection = getCollection(variant.collectionId);
   const siblings = CATALOG.filter((v) => v.slug !== variant.slug && v.collectionId === variant.collectionId);
@@ -34,7 +45,7 @@ export default function ProductDetail({ variant }: { variant: WatchVariant }) {
                 type="button"
                 onClick={() => setZoomOpen(true)}
                 aria-label="Zoom product photo"
-                className="group relative block h-full w-full cursor-zoom-in"
+                className="group relative block h-full w-full cursor-zoom-in focus-visible:outline-offset-[-6px] focus-visible:rounded-[2rem]"
               >
                 <ProductPhoto
                   src={variant.heroImage}
@@ -42,7 +53,7 @@ export default function ProductDetail({ variant }: { variant: WatchVariant }) {
                   padding="10%"
                   imgClassName="transition-transform duration-500 ease-out group-hover:scale-[1.06]"
                 />
-                <span className="pointer-events-none absolute bottom-4 right-4 flex items-center gap-1.5 rounded-full bg-white/80 px-3 py-1.5 text-[11px] font-medium text-[var(--ink-600)] opacity-0 shadow-sm backdrop-blur-md ring-1 ring-black/[0.04] transition-opacity group-hover:opacity-100">
+                <span className="pointer-events-none absolute bottom-4 right-4 flex items-center gap-1.5 rounded-full bg-white/80 px-3 py-1.5 text-[11px] font-medium text-[var(--ink-600)] opacity-0 shadow-sm backdrop-blur-md ring-1 ring-black/[0.04] transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
                     <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.8" />
                     <path d="M20 20L16.5 16.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
@@ -172,6 +183,7 @@ export default function ProductDetail({ variant }: { variant: WatchVariant }) {
       <AnimatePresence>
         {zoomOpen && variant.heroImage && (
           <motion.div
+            ref={zoomRef}
             role="dialog"
             aria-modal="true"
             aria-label={`${variant.name}, full size`}
@@ -196,9 +208,10 @@ export default function ProductDetail({ variant }: { variant: WatchVariant }) {
               />
             </motion.div>
             <button
+              ref={zoomCloseRef}
               onClick={() => setZoomOpen(false)}
               aria-label="Close zoom"
-              className="absolute right-5 top-5 rounded-full bg-white/10 p-2.5 text-white transition hover:bg-white/20"
+              className="absolute right-5 top-5 rounded-full bg-white/10 p-2.5 text-white transition hover:bg-white/20 focus-visible:outline-white"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />

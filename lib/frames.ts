@@ -107,6 +107,7 @@ export const STORY_BEATS: StoryBeat[] = [
     body: [
       "At full extension, 138 components hold their exact relationship to one another — nothing hidden, nothing decorative.",
     ],
+    cta: { primary: "Explore the collection", secondary: "Configure yours" },
   },
   {
     id: "reveal",

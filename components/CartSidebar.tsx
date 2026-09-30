@@ -1,14 +1,19 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useCart } from "@/lib/cart-context";
 import { formatPrice } from "@/lib/catalog";
 import MagneticButton from "@/components/MagneticButton";
+import { useDialogA11y } from "@/lib/use-dialog-a11y";
 
 export default function CartSidebar() {
   const { lines, isOpen, close, removeFromCart, setQuantity, subtotalFormatted } = useCart();
   const [checkedOut, setCheckedOut] = useState(false);
+  const panelRef = useRef<HTMLElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+
+  useDialogA11y({ open: isOpen, onClose: close, containerRef: panelRef, initialFocusRef: closeRef, lockScroll: true });
 
   return (
     <AnimatePresence>
@@ -23,9 +28,10 @@ export default function CartSidebar() {
             aria-hidden
           />
           <motion.aside
+            ref={panelRef}
             role="dialog"
             aria-modal="true"
-            aria-label="Shopping bag"
+            aria-labelledby="cart-title"
             className="fixed right-0 top-0 z-[95] flex h-full w-full max-w-md flex-col bg-white shadow-2xl"
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
@@ -33,10 +39,11 @@ export default function CartSidebar() {
             transition={{ type: "spring", stiffness: 320, damping: 34 }}
           >
             <div className="flex items-center justify-between border-b border-black/[0.06] px-6 py-5">
-              <h2 className="text-[15px] font-semibold tracking-tight text-[var(--ink-900)]">
+              <h2 id="cart-title" className="text-[15px] font-semibold tracking-tight text-[var(--ink-900)]">
                 Your Bag {lines.length > 0 && `(${lines.reduce((s, l) => s + l.quantity, 0)})`}
               </h2>
               <button
+                ref={closeRef}
                 onClick={close}
                 aria-label="Close bag"
                 className="rounded-full p-2 text-[var(--ink-600)] transition hover:bg-black/[0.05]"

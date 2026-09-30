@@ -87,6 +87,11 @@ function Beat({
   // stack on the card's backdrop-blur over the redrawing canvas — too
   // expensive to repaint every scroll frame.)
   const cardScale = useTransform(opacity, [0, 1], [0.97, 1]);
+  // The card only fades, it never unmounts — so without this a CTA at
+  // opacity 0 would still be clickable and reachable by Tab. visibility:hidden
+  // takes it out of the tab order, pointer hit-testing and the a11y tree
+  // until its beat is actually on screen.
+  const ctaVisibility = useTransform(opacity, (o) => (o > 0.5 ? "visible" : "hidden"));
 
   const justify =
     beat.align === "left" ? "justify-start" : beat.align === "right" ? "justify-end" : "justify-center";
@@ -157,7 +162,10 @@ function Beat({
           )}
 
           {beat.cta && (
-            <div className="pointer-events-auto mt-7 flex flex-wrap items-center gap-4 justify-center">
+            <motion.div
+              style={{ visibility: ctaVisibility }}
+              className="pointer-events-auto mt-7 flex flex-wrap items-center gap-4 justify-center"
+            >
               <MagneticButton
                 href="/collection"
                 strength={10}
@@ -173,7 +181,7 @@ function Beat({
                   {beat.cta.secondary}
                 </a>
               )}
-            </div>
+            </motion.div>
           )}
           {beat.micro && (
             <p className="mt-4 text-center text-[12px] text-[var(--ink-400)]">{beat.micro}</p>

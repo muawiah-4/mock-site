@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ChevronDown, Menu, X } from "lucide-react";
 
 const BAR_HEIGHTS = [
@@ -107,13 +107,22 @@ function RevenueCard() {
 }
 
 export default function Hero() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // No `autoPlay` attribute: a looping background video only starts when the
+  // visitor hasn't asked the OS for reduced motion.
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    videoRef.current?.play().catch(() => {});
+  }, []);
+
   return (
     <div id="apogee-root">
       <section className="relative w-full h-screen overflow-hidden bg-[#080A19]">
         <video
+          ref={videoRef}
           className="absolute inset-0 w-full h-full object-cover"
           src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260813_092641_de52eb87-daf2-41db-92cb-7a56eae012a5.mp4"
-          autoPlay
           loop
           muted
           playsInline

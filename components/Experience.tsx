@@ -211,7 +211,8 @@ export default function Experience({ children }: { children?: ReactNode }) {
     const containerTop = rect.top + window.scrollY;
     const scrollRange = el.offsetHeight - window.innerHeight;
     const target = containerTop + Math.min(1, Math.max(0, fraction)) * scrollRange;
-    window.scrollTo({ top: target, behavior: "smooth" });
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: target, behavior: reduce ? "auto" : "smooth" });
   }, []);
 
   return (

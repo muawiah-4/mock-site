@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { CATALOG, getCollection, formatPrice } from "@/lib/catalog";
+import { useDialogA11y } from "@/lib/use-dialog-a11y";
 
 const RECENT_KEY = "prx-recent-searches";
 
@@ -17,6 +18,9 @@ export default function SearchOverlay({
   const [query, setQuery] = useState("");
   const [recent, setRecent] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useDialogA11y({ open, onClose, containerRef: dialogRef, initialFocusRef: inputRef, lockScroll: true });
 
   useEffect(() => {
     if (open) {
@@ -26,17 +30,8 @@ export default function SearchOverlay({
       } catch {
         setRecent([]);
       }
-      requestAnimationFrame(() => inputRef.current?.focus());
     }
   }, [open]);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    if (open) window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -64,6 +59,7 @@ export default function SearchOverlay({
     <AnimatePresence>
       {open && (
         <motion.div
+          ref={dialogRef}
           className="fixed inset-0 z-[80] flex flex-col bg-white/95 backdrop-blur-xl"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -78,7 +74,7 @@ export default function SearchOverlay({
               initial={{ y: -16, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.3, delay: 0.05 }}
-              className="flex items-center gap-4 border-b border-black/10 pb-4"
+              className="flex items-center gap-4 border-b border-black/10 pb-4 transition-colors focus-within:border-[var(--navy)]"
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="shrink-0 text-[var(--ink-400)]">
                 <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.6" />

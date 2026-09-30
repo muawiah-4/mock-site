@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
 import { COLLECTIONS } from "@/lib/catalog";
 import { useCart } from "@/lib/cart-context";
 import SearchOverlay from "@/components/SearchOverlay";
+import { useDialogA11y } from "@/lib/use-dialog-a11y";
 
 const PLAIN_LINKS = [{ label: "Store Locator", href: "/#stores" }];
 
@@ -24,12 +25,27 @@ export default function Header() {
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { count, open: openCart } = useCart();
 
-  useEffect(() => {
-    document.body.style.overflow = mobileOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [mobileOpen]);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const mobileToggleRef = useRef<HTMLButtonElement>(null);
+  const accountRef = useRef<HTMLDivElement>(null);
+
+  // The header is raised above the menu while it's open so the toggle (now a
+  // close button) stays visible and clickable — include it in the Tab cycle.
+  useDialogA11y({
+    open: mobileOpen,
+    onClose: () => setMobileOpen(false),
+    containerRef: mobileMenuRef,
+    alsoInclude: [mobileToggleRef],
+    lockScroll: true,
+  });
+  // Disclosure, not a modal: Escape closes and returns focus, no trap.
+  useDialogA11y({
+    open: accountOpen,
+    onClose: () => setAccountOpen(false),
+    containerRef: accountRef,
+    autoFocus: false,
+    trap: false,
+  });
 
   const scheduleClose = () => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -41,7 +57,9 @@ export default function Header() {
 
   return (
     <>
-      <motion.header className="fixed inset-x-0 top-0 z-[60] flex h-16 items-center justify-between px-5 md:px-8">
+      <motion.header
+        className={`fixed inset-x-0 top-0 ${mobileOpen ? "z-[86]" : "z-[60]"} flex h-16 items-center justify-between px-5 md:px-8`}
+      >
         <motion.div aria-hidden style={{ opacity: bg }} className="glass-nav absolute inset-0 -z-10" />
         <motion.div
           aria-hidden
@@ -143,7 +161,10 @@ export default function Header() {
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
           className="flex items-center gap-1.5 md:gap-2">
           <button
-            onClick={() => setSearchOpen(true)}
+            onClick={() => {
+              setMobileOpen(false);
+              setSearchOpen(true);
+            }}
             aria-label="Search"
             className="rounded-full p-2 text-[var(--ink-600)] transition hover:bg-black/[0.05] hover:text-[var(--ink-900)]"
           >
@@ -153,11 +174,18 @@ export default function Header() {
             </svg>
           </button>
 
-          <div className="relative hidden md:block">
+          <div
+            ref={accountRef}
+            className="relative hidden md:block"
+            onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setAccountOpen(false);
+            }}
+          >
             <button
               onClick={() => setAccountOpen((v) => !v)}
               aria-label="Account"
               aria-expanded={accountOpen}
+              aria-controls="account-menu"
               className="rounded-full p-2 text-[var(--ink-600)] transition hover:bg-black/[0.05] hover:text-[var(--ink-900)]"
             >
               <svg width="19" height="19" viewBox="0 0 24 24" fill="none">
@@ -168,6 +196,7 @@ export default function Header() {
             <AnimatePresence>
               {accountOpen && (
                 <motion.div
+                  id="account-menu"
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 8 }}
@@ -186,7 +215,10 @@ export default function Header() {
           </div>
 
           <button
-            onClick={openCart}
+            onClick={() => {
+              setMobileOpen(false);
+              openCart();
+            }}
             aria-label={`Shopping bag, ${count} item${count === 1 ? "" : "s"}`}
             className="relative rounded-full p-2 text-[var(--ink-600)] transition hover:bg-black/[0.05] hover:text-[var(--ink-900)]"
           >
@@ -202,9 +234,16 @@ export default function Header() {
           </button>
 
           <button
+            ref={mobileToggleRef}
             onClick={() => setMobileOpen((v) => !v)}
-            aria-label="Toggle menu"
-            className="ml-1 rounded-full p-2.5 text-[var(--ink-600)] transition hover:bg-black/[0.05] lg:hidden"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-menu"
+            className={`ml-1 rounded-full p-2.5 transition lg:hidden ${
+              mobileOpen
+                ? "bg-white text-[var(--ink-900)] shadow-sm focus-visible:outline-white"
+                : "text-[var(--ink-600)] hover:bg-black/[0.05]"
+            }`}
           >
             <span className="relative block h-5 w-5">
               <svg
@@ -238,7 +277,14 @@ export default function Header() {
 
       <AnimatePresence>
         {mobileOpen && (
-          <div className="fixed inset-0 z-[85] lg:hidden" role="dialog" aria-modal="true" aria-label="Menu">
+          <div
+            ref={mobileMenuRef}
+            id="mobile-menu"
+            className="fixed inset-0 z-[85] lg:hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menu"
+          >
             <motion.div
               className="absolute inset-0 bg-[#080a12]/50 backdrop-blur-md"
               initial={{ opacity: 0 }}
