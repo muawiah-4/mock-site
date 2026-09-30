@@ -10,8 +10,11 @@ export function generateStaticParams() {
   return COLLECTIONS.map((c) => ({ id: c.id }));
 }
 
-export function generateMetadata({ params }: { params: { id: string } }): Metadata {
-  const collection = getCollection(params.id);
+type Props = { params: Promise<{ id: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const collection = getCollection(id);
   // The page itself calls notFound(); keep this unindexable and canonical-free.
   if (!collection) return { title: "Collection not found", robots: { index: false } };
   const lead = variantsForCollection(collection.id).find((v) => v.heroImage);
@@ -27,10 +30,11 @@ export function generateMetadata({ params }: { params: { id: string } }): Metada
   });
 }
 
-export default function CollectionDetailPage({ params }: { params: { id: string } }) {
-  const collection = getCollection(params.id);
+export default async function CollectionDetailPage({ params }: Props) {
+  const { id } = await params;
+  const collection = getCollection(id);
   if (!collection) notFound();
-  const variants = variantsForCollection(params.id);
+  const variants = variantsForCollection(id);
 
   return (
     <main>

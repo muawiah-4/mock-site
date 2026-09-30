@@ -6,7 +6,7 @@ as you scroll. This is a mock/demo project, not an official Tissot product.
 
 ## Tech stack
 
-- **Next.js 14** (App Router) + TypeScript
+- **Next.js 15** (App Router) + React 19 + TypeScript
 - **Tailwind CSS** for styling
 - **Framer Motion** for scroll-linked and viewport-triggered animation
 

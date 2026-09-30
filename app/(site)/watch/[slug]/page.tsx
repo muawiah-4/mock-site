@@ -10,8 +10,11 @@ export function generateStaticParams() {
   return CATALOG.map((v) => ({ slug: v.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const variant = getVariant(params.slug);
+type Props = { params: Promise<{ slug: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const variant = getVariant(slug);
   // The page itself calls notFound(); keep this unindexable and canonical-free.
   if (!variant) return { title: "Watch not found", robots: { index: false } };
   // Several references share a model name, so the dial keeps titles unique.
@@ -25,8 +28,9 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   });
 }
 
-export default function WatchPage({ params }: { params: { slug: string } }) {
-  const variant = getVariant(params.slug);
+export default async function WatchPage({ params }: Props) {
+  const { slug } = await params;
+  const variant = getVariant(slug);
   if (!variant) notFound();
   const collection = getCollection(variant.collectionId);
 

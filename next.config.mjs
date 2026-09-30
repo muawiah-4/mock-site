@@ -1,3 +1,6 @@
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
 const isDev = process.env.NODE_ENV !== "production";
 
 /**
@@ -6,7 +9,7 @@ const isDev = process.env.NODE_ENV !== "production";
  * Every asset is same-origin (next/font self-hosts Inter; images and video
  * live under /public), so no external origins are allowed.
  *
- * script-src keeps 'unsafe-inline' because Next 14 injects inline bootstrap
+ * script-src keeps 'unsafe-inline' because Next.js injects inline bootstrap
  * scripts and app/layout.tsx has an inline scroll-restoration script. A
  * nonce-based CSP would need middleware and force every page to render
  * dynamically, losing static generation. For a static marketing site with no
@@ -48,6 +51,9 @@ const securityHeaders = [
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Pin the tracing root to this project so a stray lockfile higher up the
+  // filesystem is not mistaken for the workspace root.
+  outputFileTracingRoot: dirname(fileURLToPath(import.meta.url)),
   // next/image is not used anywhere; disabling the optimizer makes
   // /_next/image return 404, which removes the attack surface of the
   // open Image Optimization API advisories on Next 14.2.x.

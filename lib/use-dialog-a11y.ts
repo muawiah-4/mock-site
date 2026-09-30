@@ -37,9 +37,9 @@ export function useDialogA11y({
 }: {
   open: boolean;
   onClose: () => void;
-  containerRef: RefObject<HTMLElement>;
-  initialFocusRef?: RefObject<HTMLElement>;
-  alsoInclude?: RefObject<HTMLElement>[];
+  containerRef: RefObject<HTMLElement | null>;
+  initialFocusRef?: RefObject<HTMLElement | null>;
+  alsoInclude?: RefObject<HTMLElement | null>[];
   autoFocus?: boolean;
   trap?: boolean;
   lockScroll?: boolean;
