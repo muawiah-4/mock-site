@@ -65,7 +65,7 @@ export default function BlueDialExperience() {
           className="relative z-10 mx-auto max-w-2xl text-center"
         >
           <p className="text-[clamp(1.15rem,2.2vw,1.6rem)] italic leading-relaxed text-white/90">
-            The best watches don't ask for attention. They just keep it.
+            The best watches don&rsquo;t ask for attention. They just keep it.
           </p>
           <div className="mt-5 text-[11px] font-medium uppercase tracking-[0.28em] text-white/50">
             — Tissot

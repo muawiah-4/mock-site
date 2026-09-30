@@ -40,10 +40,10 @@ export default function LifestyleMoment() {
             Everyday Icon
           </div>
           <h3 className="text-gradient text-[clamp(1.8rem,3.4vw,2.6rem)] font-semibold leading-tight tracking-tight">
-            Built for more than the wrist it's on.
+            Built for more than the wrist it&rsquo;s on.
           </h3>
           <p className="mt-4 max-w-md text-[15px] leading-relaxed text-[var(--ink-600)]">
-            A watch is never just parts on a bracelet — it's the second glance mid-conversation, the
+            A watch is never just parts on a bracelet — it&rsquo;s the second glance mid-conversation, the
             quiet check before a meeting starts. Every Tissot is built for that moment, not just the
             display case.
           </p>

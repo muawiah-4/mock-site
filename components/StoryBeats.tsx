@@ -21,10 +21,16 @@ function useBeatOpacity(
 ) {
   const [s, e] = range;
   const hw = Math.min(0.013, (e - s) / 4);
-  if (isFirst && isLast) return useTransform(progress, [s, e], [1, 1]);
-  if (isFirst) return useTransform(progress, [s, e - hw, e + hw], [1, 1, 0]);
-  if (isLast) return useTransform(progress, [s - hw, s + hw, e], [0, 1, 1]);
-  return useTransform(progress, [s - hw, s + hw, e - hw, e + hw], [0, 1, 1, 0]);
+  // Pick the keyframes first so useTransform is always called exactly once.
+  const [input, output] =
+    isFirst && isLast
+      ? [[s, e], [1, 1]]
+      : isFirst
+        ? [[s, e - hw, e + hw], [1, 1, 0]]
+        : isLast
+          ? [[s - hw, s + hw, e], [0, 1, 1]]
+          : [[s - hw, s + hw, e - hw, e + hw], [0, 1, 1, 0]];
+  return useTransform(progress, input, output);
 }
 
 /** Apogee-style one-time entrance choreography — plays once on page load,

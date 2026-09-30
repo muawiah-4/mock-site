@@ -104,7 +104,7 @@ export default function NewsCarousel() {
           <h3 className="text-[clamp(1.8rem,3.4vw,2.6rem)] font-semibold leading-tight tracking-tight text-white">
             Latest news
           </h3>
-          <p className="mt-3 text-[15px] text-white/50">Discover what's happening at Tissot</p>
+          <p className="mt-3 text-[15px] text-white/50">Discover what&rsquo;s happening at Tissot</p>
         </motion.div>
       </div>
 

@@ -84,7 +84,7 @@ export default function Configurator() {
             Configure your PRX
           </div>
           <h3 className="text-gradient text-[clamp(1.6rem,3vw,2.3rem)] font-semibold leading-tight tracking-tight">
-            Build the reference that's yours.
+            Build the reference that&rsquo;s yours.
           </h3>
 
           <div className="mt-8">
@@ -171,7 +171,7 @@ export default function Configurator() {
             ) : (
               <div>
                 <p className="mb-4 text-[13px] text-[var(--ink-600)]">
-                  This exact combination isn't part of the current collection.
+                  This exact combination isn&rsquo;t part of the current collection.
                   {alternatives.length > 0 && " Try one of these instead:"}
                 </p>
                 <div className="flex flex-col gap-2">
