@@ -47,8 +47,10 @@ body {
   );
 }
 
+/* Top stop kept light enough that --ink-600 body copy (≥5:1) and the navy
+   eyebrow (≥4.9:1) stay AA across the whole fade. */
 .tail-fade {
-  background: linear-gradient(180deg, #7d8386 0%, #a7acaf 30%, #c7cbcd 60%, #d7dadc 100%);
+  background: linear-gradient(180deg, #aab0b2 0%, #b8bdbf 30%, #c7cbcd 60%, #d7dadc 100%);
 }
 
 ::selection {

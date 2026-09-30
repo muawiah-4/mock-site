@@ -84,7 +84,7 @@ export default function NewsCarousel() {
   }, []);
 
   return (
-    <section className="hairline-grid-dark relative overflow-hidden bg-dark py-20 md:py-28">
+    <section id="news" className="hairline-grid-dark relative scroll-mt-24 overflow-hidden bg-dark py-20 md:py-28">
       <GhostHeading tone="light" align="left" className="-top-4 opacity-50 md:top-0">
         PRESS
       </GhostHeading>
