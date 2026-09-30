@@ -76,7 +76,7 @@ export default function SearchOverlay({
               transition={{ duration: 0.3, delay: 0.05 }}
               className="flex items-center gap-4 border-b border-black/10 pb-4 transition-colors focus-within:border-[var(--navy)]"
             >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="shrink-0 text-[var(--ink-400)]">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="shrink-0 text-[var(--ink-300)]">
                 <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.6" />
                 <path d="M20 20L16.5 16.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
               </svg>

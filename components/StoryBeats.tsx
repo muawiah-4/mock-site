@@ -119,7 +119,7 @@ function Beat({
         style={{ x: slide, y: rise, scale: cardScale }}
         className={`flex max-w-xl flex-col gap-4 ${textAlign} ${beat.align !== "center" ? "" : "mx-auto"}`}
       >
-        <div className="rounded-3xl bg-white/90 px-7 py-7 shadow-[0_20px_60px_-25px_rgba(20,23,26,0.35)] backdrop-blur-2xl ring-1 ring-black/[0.04] md:px-9 md:py-8">
+        <div className="rounded-3xl bg-white/90 px-7 py-7 shadow-float backdrop-blur-2xl ring-1 ring-black/[0.04] md:px-9 md:py-8">
           {beat.eyebrow &&
             (isHero ? (
               <Reveal delayMs={250}>

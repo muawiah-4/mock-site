@@ -42,7 +42,7 @@ export default function Configurator() {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: "-10%" }}
           transition={{ duration: 0.6 }}
-          className="relative aspect-square w-full overflow-hidden rounded-[2rem] shadow-[0_30px_80px_-40px_rgba(20,23,26,0.45)] md:sticky md:top-24 md:aspect-auto md:h-[520px]"
+          className="relative aspect-square w-full overflow-hidden rounded-[2rem] shadow-media md:sticky md:top-24 md:aspect-auto md:h-[520px]"
         >
           <AnimatePresence mode="wait">
             {match?.heroImage ? (
@@ -78,7 +78,7 @@ export default function Configurator() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-10%" }}
           transition={{ duration: 0.6, delay: 0.05 }}
-          className="rounded-[2rem] bg-white/40 p-7 shadow-[0_20px_60px_-30px_rgba(20,23,26,0.35)] backdrop-blur-2xl ring-1 ring-white/60 md:p-9"
+          className="rounded-[2rem] bg-white/40 p-7 shadow-float backdrop-blur-2xl ring-1 ring-white/60 md:p-9"
         >
           <div className="mb-3 text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--navy)]">
             Configure your PRX

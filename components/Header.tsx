@@ -28,6 +28,7 @@ export default function Header() {
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const mobileToggleRef = useRef<HTMLButtonElement>(null);
   const accountRef = useRef<HTMLDivElement>(null);
+  const collectionsRef = useRef<HTMLDivElement>(null);
 
   // The header is raised above the menu while it's open so the toggle (now a
   // close button) stays visible and clickable — include it in the Tab cycle.
@@ -43,6 +44,14 @@ export default function Header() {
     open: accountOpen,
     onClose: () => setAccountOpen(false),
     containerRef: accountRef,
+    autoFocus: false,
+    trap: false,
+  });
+  // Same disclosure pattern for the Collections dropdown.
+  useDialogA11y({
+    open: openMenu === "Collections",
+    onClose: () => setOpenMenu(null),
+    containerRef: collectionsRef,
     autoFocus: false,
     trap: false,
   });
@@ -91,16 +100,21 @@ export default function Header() {
             </Link>
 
             <div
+              ref={collectionsRef}
               className="relative"
               onMouseEnter={() => {
                 cancelClose();
                 setOpenMenu("Collections");
               }}
               onMouseLeave={scheduleClose}
+              onBlur={(e) => {
+                if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setOpenMenu(null);
+              }}
             >
               <button
                 onClick={() => setOpenMenu(openMenu === "Collections" ? null : "Collections")}
                 aria-expanded={openMenu === "Collections"}
+                aria-controls="collections-menu"
                 className="flex items-center gap-1 px-3 py-2 text-[13px] font-medium text-[var(--ink-600)] transition hover:text-[var(--ink-900)]"
               >
                 Collections
@@ -111,11 +125,12 @@ export default function Header() {
               <AnimatePresence>
                 {openMenu === "Collections" && (
                   <motion.div
+                    id="collections-menu"
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 8 }}
                     transition={{ duration: 0.18 }}
-                    className="absolute left-1/2 top-full w-[520px] -translate-x-1/2 rounded-2xl border border-black/[0.06] bg-white p-5 shadow-[0_24px_60px_-20px_rgba(20,23,26,0.35)]"
+                    className="absolute left-1/2 top-full w-[520px] -translate-x-1/2 rounded-2xl border border-black/[0.06] bg-white p-5 shadow-float"
                     onMouseEnter={cancelClose}
                     onMouseLeave={scheduleClose}
                   >
@@ -200,7 +215,7 @@ export default function Header() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 8 }}
-                  className="absolute right-0 top-full w-52 rounded-2xl border border-black/[0.06] bg-white p-2 shadow-[0_24px_60px_-20px_rgba(20,23,26,0.35)]"
+                  className="absolute right-0 top-full w-52 rounded-2xl border border-black/[0.06] bg-white p-2 shadow-float"
                   onMouseLeave={() => setAccountOpen(false)}
                 >
                   <button className="block w-full rounded-xl px-3 py-2 text-left text-[13px] text-[var(--ink-900)] hover:bg-black/[0.04]">
@@ -286,7 +301,7 @@ export default function Header() {
             aria-label="Menu"
           >
             <motion.div
-              className="absolute inset-0 bg-[#080a12]/50 backdrop-blur-md"
+              className="absolute inset-0 bg-dark/50 backdrop-blur-md"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -298,7 +313,7 @@ export default function Header() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -16, scale: 0.98 }}
               transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute inset-x-4 top-[76px] origin-top rounded-[24px] bg-white/70 p-6 shadow-[0_30px_80px_-30px_rgba(20,23,26,0.5)] backdrop-blur-2xl ring-1 ring-white/60"
+              className="absolute inset-x-4 top-[76px] origin-top rounded-[24px] bg-white/70 p-6 shadow-lift backdrop-blur-2xl ring-1 ring-white/60"
             >
               <nav className="flex flex-col gap-1">
                 {[

@@ -96,7 +96,7 @@ export default function Footer() {
   const [region, setRegion] = useState(REGIONS[0]);
 
   return (
-    <footer className="bg-[#0a0a0b] text-white">
+    <footer className="bg-dark text-white">
       <div className="mx-auto max-w-7xl px-6 py-16 md:px-10">
         <div className="grid grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-3 lg:grid-cols-5">
           {COLUMNS.map((col) => (
@@ -144,7 +144,7 @@ export default function Footer() {
               className="bg-transparent text-white focus:outline-none"
             >
               {REGIONS.map((r) => (
-                <option key={r} className="bg-[#0a0a0b]">
+                <option key={r} className="bg-dark">
                   {r}
                 </option>
               ))}
@@ -169,7 +169,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <p className="text-[12px] text-white/40">Tissot Copyrights {new Date().getFullYear()}</p>
+          <p className="text-[12px] text-white/55">Tissot Copyrights {new Date().getFullYear()}</p>
         </div>
       </div>
 
@@ -187,7 +187,7 @@ export default function Footer() {
         </span>
       </div>
 
-      <p className="border-t border-white/10 px-6 py-4 text-center text-[11px] text-white/30 md:px-10">
+      <p className="border-t border-white/10 px-6 py-4 text-center text-[11px] text-white/55 md:px-10">
         Concept scrollytelling experience — not an official Tissot property.
       </p>
     </footer>

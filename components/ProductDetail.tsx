@@ -31,14 +31,14 @@ export default function ProductDetail({ variant }: { variant: WatchVariant }) {
   const siblings = CATALOG.filter((v) => v.slug !== variant.slug && v.collectionId === variant.collectionId);
 
   return (
-    <main>
+    <main className="bg-[var(--bg-0)]">
       <section className="px-6 pb-20 pt-28 md:px-10 md:pt-32">
         <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 md:grid-cols-2 md:gap-16">
           <motion.div
             initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            className="relative aspect-square w-full overflow-hidden rounded-[2rem] shadow-[0_30px_80px_-40px_rgba(20,23,26,0.45)] md:sticky md:top-24 md:h-[560px] md:aspect-auto"
+            className="relative aspect-square w-full overflow-hidden rounded-[2rem] shadow-media md:sticky md:top-24 md:h-[560px] md:aspect-auto"
           >
             {variant.heroImage ? (
               <button
@@ -187,7 +187,7 @@ export default function ProductDetail({ variant }: { variant: WatchVariant }) {
             role="dialog"
             aria-modal="true"
             aria-label={`${variant.name}, full size`}
-            className="fixed inset-0 z-[120] flex items-center justify-center bg-[#0d1013]/90 p-6 backdrop-blur-md md:p-16"
+            className="fixed inset-0 z-[120] flex items-center justify-center bg-dark/90 p-6 backdrop-blur-md md:p-16"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -232,7 +232,7 @@ export default function ProductDetail({ variant }: { variant: WatchVariant }) {
                 <Link
                   key={s.slug}
                   href={`/watch/${s.slug}`}
-                  className="group flex flex-col overflow-hidden rounded-3xl border border-black/[0.06] bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_30px_70px_-30px_rgba(20,23,26,0.35)]"
+                  className="group flex flex-col overflow-hidden rounded-3xl border border-black/[0.06] bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-lift"
                 >
                   <span className="relative block aspect-square overflow-hidden bg-white">
                     {s.heroImage ? (

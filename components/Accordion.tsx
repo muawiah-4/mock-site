@@ -23,7 +23,7 @@ export default function Accordion({ items }: { items: AccordionItem[] }) {
               <motion.span
                 animate={{ rotate: expanded ? 45 : 0 }}
                 transition={{ duration: 0.2 }}
-                className="text-[18px] text-[var(--ink-400)]"
+                className="text-[18px] text-[var(--ink-300)]"
                 aria-hidden
               >
                 +

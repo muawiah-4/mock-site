@@ -90,7 +90,7 @@ export default function NewsCarousel() {
   }, []);
 
   return (
-    <section className="hairline-grid-dark relative overflow-hidden bg-[#0a0a0b] py-20 md:py-28">
+    <section className="hairline-grid-dark relative overflow-hidden bg-dark py-20 md:py-28">
       <GhostHeading tone="light" align="left" className="-top-4 opacity-50 md:top-0">
         PRESS
       </GhostHeading>
@@ -157,7 +157,7 @@ export default function NewsCarousel() {
                     )}
                   </>
                 ) : (
-                  <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-[#141824] to-[#0a0a0b] px-8 text-center">
+                  <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-dark-2 to-dark px-8 text-center">
                     <div
                       className="font-black leading-none tracking-tight text-white"
                       style={{ fontSize: "clamp(3rem, 8vw, 5.5rem)" }}
@@ -174,7 +174,7 @@ export default function NewsCarousel() {
 
         <div className="mx-auto mt-8 max-w-xl px-6 text-center">
           <p className="text-[18px] font-semibold leading-snug text-white md:text-[20px]">{NEWS[active].title}</p>
-          <p className="mt-2 text-[13px] text-white/40">{NEWS[active].date}</p>
+          <p className="mt-2 text-[13px] text-white/55">{NEWS[active].date}</p>
         </div>
 
         <div className="mt-6 flex justify-center gap-2">

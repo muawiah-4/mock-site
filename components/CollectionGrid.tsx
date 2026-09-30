@@ -52,7 +52,7 @@ export default function CollectionGrid({ limit, collectionId }: { limit?: number
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-10%" }}
             transition={{ duration: 0.5, delay: (i % 4) * 0.06, ease: [0.16, 1, 0.3, 1] }}
-            className="group flex flex-col overflow-hidden rounded-3xl border border-black/[0.06] bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_30px_70px_-30px_rgba(20,23,26,0.35)]"
+            className="group flex flex-col overflow-hidden rounded-3xl border border-black/[0.06] bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-lift"
           >
             <Link href={`/watch/${v.slug}`} className="relative block aspect-square overflow-hidden bg-white">
               <ProductImage variant={v} />
@@ -101,7 +101,7 @@ export default function CollectionGrid({ limit, collectionId }: { limit?: number
           >
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/[0.04]">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" className="text-[var(--ink-400)]" />
+                <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" className="text-[var(--ink-300)]" />
               </svg>
             </span>
             <p className="text-[13px] font-medium text-[var(--ink-600)]">More references coming</p>

@@ -19,7 +19,7 @@ export default function LifestyleMoment() {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: "-10%" }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="relative aspect-square w-full overflow-hidden rounded-[2rem] shadow-[0_40px_100px_-40px_rgba(20,23,26,0.45)] md:order-2"
+          className="relative aspect-square w-full overflow-hidden rounded-[2rem] shadow-media md:order-2"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
