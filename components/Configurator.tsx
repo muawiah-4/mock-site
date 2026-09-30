@@ -2,34 +2,19 @@
 
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CATALOG, DIAL_OPTIONS, SIZE_OPTIONS, formatPrice } from "@/lib/catalog";
-import type { WatchVariant } from "@/lib/catalog";
+import { formatPrice } from "@/lib/catalog";
+import {
+  DEFAULT_VARIANT,
+  DIALS,
+  PRX_CATALOG,
+  SIZES,
+  STRAPS,
+  findVariant,
+  variantForDial,
+} from "@/lib/configurator";
 import { useCart } from "@/lib/cart-context";
 import ProductPhoto from "@/components/ProductPhoto";
 import MagneticButton from "@/components/MagneticButton";
-
-// The configurator only ever builds a PRX — never suggest a variant from
-// another collection just because it happens to share a dial color id.
-const PRX_CATALOG = CATALOG.filter((v) => v.collectionId === "prx");
-
-// Every option is derived from real PRX references, so any selection the UI
-// allows resolves to an actual catalog entry (and a real cart slug).
-const DIALS = DIAL_OPTIONS.filter((d) => PRX_CATALOG.some((v) => v.dial.id === d.id));
-const SIZES = SIZE_OPTIONS.filter((s) => PRX_CATALOG.some((v) => v.size.id === s.id));
-const STRAPS = Array.from(new Set(PRX_CATALOG.map((v) => v.specs.bracelet)));
-
-const DEFAULT_VARIANT = PRX_CATALOG.find((v) => v.size.id === "40") ?? PRX_CATALOG[0];
-
-const findVariant = (dialId: string, sizeId: string) =>
-  PRX_CATALOG.find((v) => v.dial.id === dialId && v.size.id === sizeId);
-
-/** The variant with this dial whose case size is closest to `sizeId`. */
-function nearestForDial(dialId: string, sizeId: string): WatchVariant {
-  const target = parseFloat(sizeId);
-  return PRX_CATALOG.filter((v) => v.dial.id === dialId).sort(
-    (a, b) => Math.abs(parseFloat(a.size.id) - target) - Math.abs(parseFloat(b.size.id) - target)
-  )[0];
-}
 
 export default function Configurator() {
   const [slug, setSlug] = useState(DEFAULT_VARIANT.slug);
@@ -41,7 +26,7 @@ export default function Configurator() {
   const dial = match.dial;
 
   const selectDial = (dialId: string) => {
-    const next = findVariant(dialId, match.size.id) ?? nearestForDial(dialId, match.size.id);
+    const next = variantForDial(dialId, match.size.id);
     setNotice(
       next.size.id !== match.size.id
         ? `${next.dial.label} is only offered in ${next.size.label} — case size updated.`

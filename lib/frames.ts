@@ -41,6 +41,8 @@ export function frameForProgress(progress: number): number {
   return pts[pts.length - 1].f;
 }
 
+export type StoryCta = { label: string; href: string };
+
 export type StoryBeat = {
   id: string;
   range: [number, number];
@@ -51,7 +53,7 @@ export type StoryBeat = {
    *  is the payoff and nothing should sit on top of it. */
   headline?: string;
   body?: string[];
-  cta?: { primary: string; secondary?: string };
+  cta?: { primary: StoryCta; secondary?: StoryCta };
   micro?: string;
 };
 
@@ -107,7 +109,10 @@ export const STORY_BEATS: StoryBeat[] = [
     body: [
       "At full extension, every component holds its exact relationship to the next — nothing hidden, nothing decorative.",
     ],
-    cta: { primary: "Explore the collection", secondary: "Configure yours" },
+    cta: {
+      primary: { label: "Explore the collection", href: "/collection" },
+      secondary: { label: "Configure yours", href: "#configurator" },
+    },
   },
   {
     id: "reveal",

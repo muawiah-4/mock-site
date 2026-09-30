@@ -7,9 +7,9 @@ export type CartLine = { slug: string; quantity: number };
 
 // `hydrated` flips in the same update that loads the stored lines, so the
 // save effect never persists the initial empty cart over the real one.
-type CartState = { lines: CartLine[]; isOpen: boolean; hydrated: boolean };
+export type CartState = { lines: CartLine[]; isOpen: boolean; hydrated: boolean };
 
-type CartAction =
+export type CartAction =
   | { type: "ADD"; slug: string; quantity?: number }
   | { type: "REMOVE"; slug: string }
   | { type: "SET_QTY"; slug: string; quantity: number }
@@ -18,16 +18,16 @@ type CartAction =
   | { type: "HYDRATE"; lines: CartLine[] };
 
 const STORAGE_KEY = "prx-cart-v1";
-const MAX_QTY = 99;
+export const MAX_QTY = 99;
 
 /** Whole number in [1, MAX_QTY]; NaN/Infinity fall back to 1. */
-function clampQty(n: number): number {
+export function clampQty(n: number): number {
   return Number.isFinite(n) ? Math.min(MAX_QTY, Math.max(1, Math.floor(n))) : 1;
 }
 
 /** Storage is user-editable, so treat it as untrusted: keep only well-formed
  * lines for slugs still in the catalog, with sane integer quantities. */
-function parseStoredLines(raw: string | null): CartLine[] {
+export function parseStoredLines(raw: string | null): CartLine[] {
   if (!raw) return [];
   let data: unknown;
   try {
@@ -51,7 +51,7 @@ function parseStoredLines(raw: string | null): CartLine[] {
   return lines;
 }
 
-function reducer(state: CartState, action: CartAction): CartState {
+export function cartReducer(state: CartState, action: CartAction): CartState {
   switch (action.type) {
     case "HYDRATE":
       return { ...state, lines: action.lines, hydrated: true };
@@ -98,7 +98,7 @@ type CartContextValue = {
 const CartContext = createContext<CartContextValue | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [state, dispatch] = useReducer(reducer, { lines: [], isOpen: false, hydrated: false });
+  const [state, dispatch] = useReducer(cartReducer, { lines: [], isOpen: false, hydrated: false });
 
   useEffect(() => {
     let raw: string | null = null;

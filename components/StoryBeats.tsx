@@ -167,18 +167,18 @@ function Beat({
               className="pointer-events-auto mt-7 flex flex-wrap items-center gap-4 justify-center"
             >
               <MagneticButton
-                href="/collection"
+                href={beat.cta.primary.href}
                 strength={10}
                 className="btn-primary inline-block rounded-full px-7 py-3 text-[14px] font-medium text-white transition-transform hover:scale-[1.03] active:scale-[0.98]"
               >
-                {beat.cta.primary}
+                {beat.cta.primary.label}
               </MagneticButton>
               {beat.cta.secondary && (
                 <a
-                  href="#configurator"
+                  href={beat.cta.secondary.href}
                   className="text-[14px] font-medium text-[var(--ink-900)] underline decoration-[var(--navy)]/40 underline-offset-4 transition hover:decoration-[var(--navy)]"
                 >
-                  {beat.cta.secondary}
+                  {beat.cta.secondary.label}
                 </a>
               )}
             </motion.div>
