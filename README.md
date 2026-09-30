@@ -29,6 +29,7 @@ CI (`.github/workflows/ci.yml`) runs these on every push and pull request to
 ```bash
 npm run typecheck   # tsc --noEmit
 npm run lint        # next lint
+npm test            # vitest run (unit tests in tests/, node env)
 npm run build       # next build
 ```
 
