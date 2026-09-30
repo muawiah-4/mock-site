@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { COLLECTIONS, getCollection, variantsForCollection } from "@/lib/catalog";
 import CollectionGrid from "@/components/CollectionGrid";
 import Footer from "@/components/Footer";
+import { SITE_NAME, pageMetadata } from "@/lib/site";
 
 export function generateStaticParams() {
   return COLLECTIONS.map((c) => ({ id: c.id }));
@@ -11,11 +12,19 @@ export function generateStaticParams() {
 
 export function generateMetadata({ params }: { params: { id: string } }): Metadata {
   const collection = getCollection(params.id);
-  if (!collection) return { title: "Collection — TISSOT" };
-  return {
-    title: `${collection.name} — TISSOT`,
+  // The page itself calls notFound(); keep this unindexable and canonical-free.
+  if (!collection) return { title: "Collection not found", robots: { index: false } };
+  const lead = variantsForCollection(collection.id).find((v) => v.heroImage);
+  return pageMetadata({
+    title: `${collection.name} Collection`,
+    socialTitle: `${collection.name} Collection · ${SITE_NAME}`,
     description: collection.description,
-  };
+    path: `/collection/${collection.id}`,
+    image:
+      lead && lead.heroImage
+        ? { url: lead.heroImage, alt: `${lead.name} — ${lead.dial.label}` }
+        : undefined,
+  });
 }
 
 export default function CollectionDetailPage({ params }: { params: { id: string } }) {

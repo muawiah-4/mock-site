@@ -2,13 +2,32 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import MotionProvider from "@/components/MotionProvider";
+import { DEFAULT_OG_IMAGE, SITE_DEFAULT_TITLE, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "TISSOT PRX — Every second, engineered in the open.",
-  description:
-    "The TISSOT PRX, explored: a scroll-driven exploded-view construction story, a hands-on case viewer, a live configurator, and the full PRX collection.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_DEFAULT_TITLE,
+    template: `%s · ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    locale: "en_US",
+    title: SITE_DEFAULT_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [DEFAULT_OG_IMAGE],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_DEFAULT_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [DEFAULT_OG_IMAGE.url],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

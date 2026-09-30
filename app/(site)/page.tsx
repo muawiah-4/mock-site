@@ -13,10 +13,32 @@ import StoreLocator from "@/components/StoreLocator";
 import SectionDivider from "@/components/SectionDivider";
 import Footer from "@/components/Footer";
 import Link from "next/link";
+import JsonLd from "@/components/JsonLd";
+import { SITE_DEFAULT_TITLE, SITE_DESCRIPTION, SITE_NAME, SITE_URL, pageMetadata } from "@/lib/site";
+
+export const metadata = pageMetadata({
+  title: { absolute: SITE_DEFAULT_TITLE },
+  socialTitle: SITE_DEFAULT_TITLE,
+  description: SITE_DESCRIPTION,
+  path: "/",
+});
 
 export default function Home() {
   return (
     <main>
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: SITE_NAME,
+          url: `${SITE_URL}/`,
+          description: SITE_DESCRIPTION,
+          inLanguage: "en",
+        }}
+      />
+      {/* The hero headline lives in a scroll-faded card rendered per beat, so
+          the page-level heading is kept visually hidden rather than restyling it. */}
+      <h1 className="sr-only">Tissot PRX — a concept scroll experience</h1>
       <Experience />
 
       <BlueDialExperience />

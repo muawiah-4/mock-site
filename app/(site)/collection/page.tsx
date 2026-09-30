@@ -1,14 +1,16 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { COLLECTIONS } from "@/lib/catalog";
 import CollectionGrid from "@/components/CollectionGrid";
 import Footer from "@/components/Footer";
 import GhostHeading from "@/components/GhostHeading";
+import { SITE_NAME, pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "All Collections — TISSOT",
+export const metadata = pageMetadata({
+  title: "All Collections",
+  socialTitle: `All Collections · ${SITE_NAME}`,
   description: "Browse every current TISSOT collection: PRX, Gentleman, Seastar, Everytime, T-Touch, and Heritage.",
-};
+  path: "/collection",
+});
 
 export default function CollectionPage() {
   return (
