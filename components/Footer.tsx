@@ -131,8 +131,6 @@ export default function Footer() {
                 </option>
               ))}
             </select>
-            <span className="text-white/40">|</span>
-            <button className="underline underline-offset-2 hover:text-white">Change country</button>
           </label>
 
           <p className="text-[12px] text-white/55">

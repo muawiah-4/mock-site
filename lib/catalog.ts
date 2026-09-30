@@ -16,9 +16,13 @@ export const STRAP_OPTIONS: StrapOption[] = [
   { id: "rubber", label: "Rubber Strap", color: "#1b1b1d" },
 ];
 
+// Size labels must always match the variant's `specs.caseDiameter`, which is the source of truth.
 export const SIZE_OPTIONS: SizeOption[] = [
+  { id: "30", label: "30mm", scale: 0.74 },
   { id: "35", label: "35mm", scale: 0.86 },
   { id: "40", label: "40mm", scale: 1 },
+  { id: "45", label: "45mm", scale: 1.12 },
+  { id: "45.5", label: "45.5mm", scale: 1.14 },
 ];
 
 export type Collection = {
@@ -220,7 +224,7 @@ export const CATALOG: WatchVariant[] = [
     price: 595,
     dial: dial("blue"),
     strap: strap("bracelet"),
-    size: size("40"),
+    size: size("45.5"),
     blurb: "A dive-rated chronograph with a unidirectional bezel and 300m of water resistance.",
     heroImage: "/watches/seastar-1000-chrono.jpg",
     specs: {
@@ -239,7 +243,7 @@ export const CATALOG: WatchVariant[] = [
     price: 375,
     dial: dial("silver"),
     strap: strap("bracelet"),
-    size: size("35"),
+    size: size("30"),
     blurb: "An ultra-thin, distraction-free dial on a fine-linked steel bracelet.",
     heroImage: "/watches/everytime-30.jpg",
     specs: {
@@ -258,7 +262,7 @@ export const CATALOG: WatchVariant[] = [
     price: 995,
     dial: dial("black"),
     strap: strap("rubber"),
-    size: size("40"),
+    size: size("45"),
     blurb: "Altimeter, compass, and chronograph — a tactile-sapphire hybrid that never needs a battery change.",
     heroImage: "/watches/t-touch-connect.jpg",
     specs: {
@@ -342,6 +346,14 @@ export function getCollection(id: string): Collection | undefined {
 
 export function variantsForCollection(collectionId: string): WatchVariant[] {
   return CATALOG.filter((v) => v.collectionId === collectionId);
+}
+
+/**
+ * Other variants of the same model (same collection and model name) — e.g. every
+ * dial/size of the PRX Powermatic 80. Includes `variant` itself, in catalog order.
+ */
+export function modelVariants(variant: WatchVariant): WatchVariant[] {
+  return CATALOG.filter((v) => v.collectionId === variant.collectionId && v.name === variant.name);
 }
 
 export function formatPrice(value: number): string {

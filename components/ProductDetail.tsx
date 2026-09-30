@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { WatchVariant } from "@/lib/catalog";
-import { CATALOG, getCollection, formatPrice } from "@/lib/catalog";
+import { CATALOG, getCollection, formatPrice, modelVariants } from "@/lib/catalog";
 import { useCart } from "@/lib/cart-context";
 import Accordion from "@/components/Accordion";
 import ProductPhoto from "@/components/ProductPhoto";
@@ -28,6 +28,8 @@ export default function ProductDetail({ variant }: { variant: WatchVariant }) {
   });
 
   const collection = getCollection(variant.collectionId);
+  const family = modelVariants(variant);
+  const showSize = new Set(family.map((v) => v.size.id)).size > 1;
   const siblings = CATALOG.filter((v) => v.slug !== variant.slug && v.collectionId === variant.collectionId);
 
   return (
@@ -98,6 +100,47 @@ export default function ProductDetail({ variant }: { variant: WatchVariant }) {
               <p className="mt-5 text-[22px] font-semibold text-[var(--ink-900)]">{formatPrice(variant.price)}</p>
               <p className="mt-5 max-w-md text-[15px] leading-relaxed text-[var(--ink-600)]">{variant.blurb}</p>
             </motion.div>
+
+            {family.length > 1 && (
+              <motion.nav
+                aria-label={`${variant.name} variants`}
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.42 }}
+                className="mt-7"
+              >
+                <p className="mb-3 text-[13px] font-medium text-[var(--ink-900)]">
+                  Dial{showSize && " & size"} — <span className="text-[var(--ink-400)]">{variant.dial.label}</span>
+                </p>
+                <ul className="flex flex-wrap gap-2">
+                  {family.map((v) => {
+                    const current = v.slug === variant.slug;
+                    return (
+                      <li key={v.slug}>
+                        <Link
+                          href={`/watch/${v.slug}`}
+                          aria-current={current ? "page" : undefined}
+                          scroll={false}
+                          className={`flex items-center gap-2 rounded-full border py-1.5 pl-1.5 pr-3.5 text-[12px] font-medium transition ${
+                            current
+                              ? "border-[var(--navy)] bg-[var(--navy)] text-white"
+                              : "border-black/10 bg-white/30 text-[var(--ink-600)] hover:border-black/20"
+                          }`}
+                        >
+                          <span
+                            aria-hidden="true"
+                            className="h-5 w-5 rounded-full ring-1 ring-black/10"
+                            style={{ background: v.dial.hex }}
+                          />
+                          {v.dial.label}
+                          {showSize && <span className={current ? "text-white/70" : "text-[var(--ink-400)]"}>{v.size.label}</span>}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </motion.nav>
+            )}
 
             <motion.div
               initial={{ opacity: 0, y: 24 }}

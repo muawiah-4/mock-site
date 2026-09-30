@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CATALOG, DIAL_OPTIONS, STRAP_OPTIONS, SIZE_OPTIONS, formatPrice } from "@/lib/catalog";
+import { CATALOG, DIAL_OPTIONS, SIZE_OPTIONS, formatPrice } from "@/lib/catalog";
+import type { WatchVariant } from "@/lib/catalog";
 import { useCart } from "@/lib/cart-context";
 import ProductPhoto from "@/components/ProductPhoto";
 import MagneticButton from "@/components/MagneticButton";
@@ -11,24 +12,52 @@ import MagneticButton from "@/components/MagneticButton";
 // another collection just because it happens to share a dial color id.
 const PRX_CATALOG = CATALOG.filter((v) => v.collectionId === "prx");
 
+// Every option is derived from real PRX references, so any selection the UI
+// allows resolves to an actual catalog entry (and a real cart slug).
+const DIALS = DIAL_OPTIONS.filter((d) => PRX_CATALOG.some((v) => v.dial.id === d.id));
+const SIZES = SIZE_OPTIONS.filter((s) => PRX_CATALOG.some((v) => v.size.id === s.id));
+const STRAPS = Array.from(new Set(PRX_CATALOG.map((v) => v.specs.bracelet)));
+
+const DEFAULT_VARIANT = PRX_CATALOG.find((v) => v.size.id === "40") ?? PRX_CATALOG[0];
+
+const findVariant = (dialId: string, sizeId: string) =>
+  PRX_CATALOG.find((v) => v.dial.id === dialId && v.size.id === sizeId);
+
+/** The variant with this dial whose case size is closest to `sizeId`. */
+function nearestForDial(dialId: string, sizeId: string): WatchVariant {
+  const target = parseFloat(sizeId);
+  return PRX_CATALOG.filter((v) => v.dial.id === dialId).sort(
+    (a, b) => Math.abs(parseFloat(a.size.id) - target) - Math.abs(parseFloat(b.size.id) - target)
+  )[0];
+}
+
 export default function Configurator() {
-  const [dialId, setDialId] = useState(DIAL_OPTIONS[0].id);
-  const [strapId, setStrapId] = useState<(typeof STRAP_OPTIONS)[number]["id"]>(STRAP_OPTIONS[0].id);
-  const [sizeId, setSizeId] = useState("40");
+  const [slug, setSlug] = useState(DEFAULT_VARIANT.slug);
+  const [notice, setNotice] = useState("");
   const [justAdded, setJustAdded] = useState(false);
   const { addToCart, open } = useCart();
 
-  const dial = DIAL_OPTIONS.find((d) => d.id === dialId)!;
+  const match = useMemo(() => PRX_CATALOG.find((v) => v.slug === slug) ?? DEFAULT_VARIANT, [slug]);
+  const dial = match.dial;
 
-  const match = useMemo(
-    () => PRX_CATALOG.find((v) => v.dial.id === dialId && v.strap.id === strapId && v.size.id === sizeId),
-    [dialId, strapId, sizeId]
-  );
+  const selectDial = (dialId: string) => {
+    const next = findVariant(dialId, match.size.id) ?? nearestForDial(dialId, match.size.id);
+    setNotice(
+      next.size.id !== match.size.id
+        ? `${next.dial.label} is only offered in ${next.size.label} — case size updated.`
+        : ""
+    );
+    setSlug(next.slug);
+    setJustAdded(false);
+  };
 
-  const alternatives = useMemo(
-    () => PRX_CATALOG.filter((v) => v.dial.id === dialId && v !== match).slice(0, 2),
-    [dialId, match]
-  );
+  const selectSize = (sizeId: string) => {
+    const next = findVariant(dial.id, sizeId);
+    if (!next) return;
+    setNotice("");
+    setSlug(next.slug);
+    setJustAdded(false);
+  };
 
   return (
     <section
@@ -45,7 +74,7 @@ export default function Configurator() {
           className="relative aspect-square w-full overflow-hidden rounded-[2rem] shadow-media md:sticky md:top-24 md:aspect-auto md:h-[520px]"
         >
           <AnimatePresence mode="wait">
-            {match?.heroImage ? (
+            {match.heroImage ? (
               <motion.div
                 key={match.slug}
                 initial={{ opacity: 0 }}
@@ -92,14 +121,15 @@ export default function Configurator() {
               Dial — <span className="text-[var(--ink-400)]">{dial.label}</span>
             </div>
             <div className="flex gap-3">
-              {DIAL_OPTIONS.map((d) => (
+              {DIALS.map((d) => (
                 <button
                   key={d.id}
-                  onClick={() => setDialId(d.id)}
+                  type="button"
+                  onClick={() => selectDial(d.id)}
                   aria-label={d.label}
-                  aria-pressed={dialId === d.id}
+                  aria-pressed={dial.id === d.id}
                   className={`h-10 w-10 rounded-full ring-2 ring-offset-2 ring-offset-white/40 transition ${
-                    dialId === d.id ? "ring-[var(--navy)] scale-110" : "ring-transparent hover:ring-black/15"
+                    dial.id === d.id ? "ring-[var(--navy)] scale-110" : "ring-transparent hover:ring-black/15"
                   }`}
                   style={{ background: d.hex }}
                 />
@@ -108,91 +138,68 @@ export default function Configurator() {
           </div>
 
           <div className="mt-7">
-            <div className="mb-3 text-[13px] font-medium text-[var(--ink-900)]">Strap</div>
-            <div className="flex flex-wrap gap-2">
-              {STRAP_OPTIONS.map((s) => (
-                <button
-                  key={s.id}
-                  onClick={() => setStrapId(s.id)}
-                  aria-pressed={strapId === s.id}
-                  className={`rounded-full border px-4 py-2 text-[13px] font-medium transition ${
-                    strapId === s.id
-                      ? "border-[var(--navy)] bg-[var(--navy)] text-white"
-                      : "border-black/10 bg-white/30 text-[var(--ink-600)] hover:border-black/20"
-                  }`}
-                >
-                  {s.label}
-                </button>
-              ))}
+            <div className="mb-3 text-[13px] font-medium text-[var(--ink-900)]">
+              Strap — <span className="text-[var(--ink-400)]">{match.specs.bracelet}</span>
             </div>
+            {STRAPS.length === 1 && (
+              <p className="text-[12px] text-[var(--ink-400)]">Every PRX ships on its integrated steel bracelet.</p>
+            )}
           </div>
 
           <div className="mt-7">
-            <div className="mb-3 text-[13px] font-medium text-[var(--ink-900)]">Case size</div>
-            <div className="flex gap-2">
-              {SIZE_OPTIONS.map((s) => (
-                <button
-                  key={s.id}
-                  onClick={() => setSizeId(s.id)}
-                  aria-pressed={sizeId === s.id}
-                  className={`rounded-full border px-4 py-2 text-[13px] font-medium transition ${
-                    sizeId === s.id
-                      ? "border-[var(--navy)] bg-[var(--navy)] text-white"
-                      : "border-black/10 bg-white/30 text-[var(--ink-600)] hover:border-black/20"
-                  }`}
-                >
-                  {s.label}
-                </button>
-              ))}
+            <div className="mb-3 text-[13px] font-medium text-[var(--ink-900)]" id="configurator-size-label">
+              Case size
             </div>
+            <div className="flex gap-2" role="group" aria-labelledby="configurator-size-label">
+              {SIZES.map((s) => {
+                const available = Boolean(findVariant(dial.id, s.id));
+                const selected = match.size.id === s.id;
+                const reason = `Not available with the ${dial.label} dial`;
+                return (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => available && selectSize(s.id)}
+                    aria-pressed={selected}
+                    aria-disabled={!available}
+                    title={available ? undefined : reason}
+                    className={`rounded-full border px-4 py-2 text-[13px] font-medium transition ${
+                      selected
+                        ? "border-[var(--navy)] bg-[var(--navy)] text-white"
+                        : available
+                          ? "border-black/10 bg-white/30 text-[var(--ink-600)] hover:border-black/20"
+                          : "cursor-not-allowed border-dashed border-black/10 bg-transparent text-[var(--ink-400)] line-through decoration-black/20"
+                    }`}
+                  >
+                    {s.label}
+                    {!available && <span className="sr-only"> — {reason}</span>}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="mt-2 min-h-[1.25rem] text-[12px] text-[var(--ink-400)]" role="status" aria-live="polite">
+              {notice}
+            </p>
           </div>
 
           <div className="mt-10 border-t border-black/[0.08] pt-6">
-            {match ? (
-              <>
-                <div className="mb-4 flex items-center justify-between">
-                  <span className="text-[14px] text-[var(--ink-600)]">{match.name}</span>
-                  <span className="text-[18px] font-semibold text-[var(--ink-900)]">
-                    {formatPrice(match.price)}
-                  </span>
-                </div>
-                <MagneticButton
-                  onClick={() => {
-                    addToCart(match.slug);
-                    setJustAdded(true);
-                    setTimeout(() => open(), 300);
-                  }}
-                  className="btn-primary w-full rounded-full py-3.5 text-[14px] font-medium text-white transition-transform hover:scale-[1.01] active:scale-[0.99]"
-                  strength={10}
-                >
-                  {justAdded ? "Added ✓" : "Add to Bag"}
-                </MagneticButton>
-              </>
-            ) : (
-              <div>
-                <p className="mb-4 text-[13px] text-[var(--ink-600)]">
-                  This exact combination isn&rsquo;t part of the current collection.
-                  {alternatives.length > 0 && " Try one of these instead:"}
-                </p>
-                <div className="flex flex-col gap-2">
-                  {alternatives.map((v) => (
-                    <button
-                      key={v.slug}
-                      onClick={() => {
-                        setStrapId(v.strap.id);
-                        setSizeId(v.size.id);
-                      }}
-                      className="flex items-center justify-between rounded-xl border border-black/10 bg-white/30 px-4 py-3 text-left text-[13px] transition hover:border-[var(--navy)]"
-                    >
-                      <span>
-                        {v.strap.label} · {v.size.label}
-                      </span>
-                      <span className="font-medium">{formatPrice(v.price)}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+            <div className="mb-4 flex items-center justify-between gap-4">
+              <span className="text-[14px] text-[var(--ink-600)]">
+                {match.name} <span className="text-[var(--ink-400)]">· {match.size.label}</span>
+              </span>
+              <span className="text-[18px] font-semibold text-[var(--ink-900)]">{formatPrice(match.price)}</span>
+            </div>
+            <MagneticButton
+              onClick={() => {
+                addToCart(match.slug);
+                setJustAdded(true);
+                setTimeout(() => open(), 300);
+              }}
+              className="btn-primary w-full rounded-full py-3.5 text-[14px] font-medium text-white transition-transform hover:scale-[1.01] active:scale-[0.99]"
+              strength={10}
+            >
+              {justAdded ? "Added ✓" : "Add to Bag"}
+            </MagneticButton>
           </div>
         </motion.div>
       </div>
