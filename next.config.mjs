@@ -51,6 +51,8 @@ const securityHeaders = [
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Lint the test suite too (next lint skips tests/ by default).
+  eslint: { dirs: ["app", "components", "lib", "tests"] },
   // Pin the tracing root to this project so a stray lockfile higher up the
   // filesystem is not mistaken for the workspace root.
   outputFileTracingRoot: dirname(fileURLToPath(import.meta.url)),
