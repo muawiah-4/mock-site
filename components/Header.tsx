@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
 import { COLLECTIONS } from "@/lib/catalog";
 import { useCart } from "@/lib/cart-context";
+import { track } from "@/lib/analytics";
 import SearchOverlay from "@/components/SearchOverlay";
 import { useDialogA11y } from "@/lib/use-dialog-a11y";
 
@@ -233,6 +234,7 @@ export default function Header() {
             onClick={() => {
               setMobileOpen(false);
               openCart();
+              track("cart_open", { source: "header" });
             }}
             aria-label={`Shopping bag, ${count} item${count === 1 ? "" : "s"}`}
             className="relative rounded-full p-2 text-[var(--ink-600)] transition hover:bg-black/[0.05] hover:text-[var(--ink-900)]"
@@ -367,6 +369,7 @@ export default function Header() {
                     onClick={() => {
                       setMobileOpen(false);
                       openCart();
+                      track("cart_open", { source: "mobile_menu" });
                     }}
                     className="flex h-[46px] flex-1 items-center justify-center rounded-full border border-black/10 bg-white/40 text-[14px] font-medium text-[var(--ink-900)] transition hover:bg-white/70"
                   >

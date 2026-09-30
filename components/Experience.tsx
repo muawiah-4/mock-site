@@ -4,6 +4,7 @@ import { useEffect, useRef, useCallback, type ReactNode } from "react";
 import { useScroll, useMotionValueEvent } from "framer-motion";
 import { TOTAL_FRAMES, frameSrc, frameForProgress } from "@/lib/frames";
 import { ScrollControlContext } from "@/lib/scroll-context";
+import { track } from "@/lib/analytics";
 import StoryBeats from "@/components/StoryBeats";
 import ExplodedTimeline from "@/components/ExplodedTimeline";
 import LightSweep from "@/components/LightSweep";
@@ -17,6 +18,9 @@ const FRAME_IDLE = 0;
 const FRAME_LOADING = 1;
 const FRAME_LOADED = 2;
 const FRAME_FAILED = 3;
+
+/** Hero scroll-depth milestones (percent of the frame sequence), reported once each per page view. */
+const SCROLL_MILESTONES = [25, 50, 75, 100] as const;
 
 export default function Experience({ children }: { children?: ReactNode }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -198,10 +202,20 @@ export default function Experience({ children }: { children?: ReactNode }) {
     };
   }, [drawFrame, scrollYProgress]);
 
+  const reachedMilestonesRef = useRef(new Set<number>());
+
   useMotionValueEvent(scrollYProgress, "change", (v) => {
     const frame = frameForProgress(v);
     currentFrameRef.current = frame;
     drawFrame(frame);
+    // 0.995 so sub-pixel rounding at the very end still counts as 100%.
+    const percent = v >= 0.995 ? 100 : v * 100;
+    for (const m of SCROLL_MILESTONES) {
+      if (percent >= m && !reachedMilestonesRef.current.has(m)) {
+        reachedMilestonesRef.current.add(m);
+        track("hero_scroll_depth", { percent: m });
+      }
+    }
   });
 
   const scrollToFraction = useCallback((fraction: number) => {

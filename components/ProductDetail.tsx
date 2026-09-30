@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { WatchVariant } from "@/lib/catalog";
 import { CATALOG, getCollection, formatPrice, modelVariants } from "@/lib/catalog";
 import { useCart } from "@/lib/cart-context";
+import { track } from "@/lib/analytics";
 import Accordion from "@/components/Accordion";
 import ProductPhoto from "@/components/ProductPhoto";
 import MagneticButton from "@/components/MagneticButton";
@@ -169,6 +170,7 @@ export default function ProductDetail({ variant }: { variant: WatchVariant }) {
               <MagneticButton
                 onClick={() => {
                   addToCart(variant.slug, qty);
+                  track("add_to_bag", { source: "product_page", variant: variant.slug, quantity: qty });
                   setAdded(true);
                   setTimeout(() => open(), 300);
                 }}

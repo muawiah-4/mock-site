@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import MotionProvider from "@/components/MotionProvider";
+import { analyticsConfig } from "@/lib/analytics";
 import { DEFAULT_OG_IMAGE, SITE_DEFAULT_TITLE, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
@@ -46,6 +48,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
         <MotionProvider>{children}</MotionProvider>
+        {/* Opt-in, cookieless Umami — rendered only when NEXT_PUBLIC_UMAMI_WEBSITE_ID is set. */}
+        {analyticsConfig && (
+          <Script
+            src={analyticsConfig.scriptUrl}
+            data-website-id={analyticsConfig.websiteId}
+            data-do-not-track="true"
+            {...(analyticsConfig.domain ? { "data-domains": analyticsConfig.domain } : {})}
+            strategy="afterInteractive"
+            defer
+          />
+        )}
       </body>
     </html>
   );

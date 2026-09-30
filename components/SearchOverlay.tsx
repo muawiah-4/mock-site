@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { CATALOG, getCollection, formatPrice } from "@/lib/catalog";
 import { useDialogA11y } from "@/lib/use-dialog-a11y";
+import { searchLengthBucket, track } from "@/lib/analytics";
 import { MAX_RECENT, MAX_TERM_LENGTH, RECENT_KEY, parseRecent } from "@/lib/recent-searches";
 
 export default function SearchOverlay({
@@ -85,7 +86,14 @@ export default function SearchOverlay({
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") commitSearch(query);
+                  if (e.key === "Enter") {
+                    commitSearch(query);
+                    // Query text is never sent — only a coarse length bucket and whether anything matched.
+                    const length = query.trim().length;
+                    if (length > 0) {
+                      track("search_submit", { length: searchLengthBucket(length), has_results: results.length > 0 });
+                    }
+                  }
                 }}
                 placeholder="Search PRX, collections, dial colors…"
                 className="w-full bg-transparent text-2xl font-medium tracking-tight text-[var(--ink-900)] placeholder:text-[var(--ink-400)] focus:outline-none md:text-3xl"

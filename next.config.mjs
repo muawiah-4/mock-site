@@ -4,10 +4,38 @@ import { fileURLToPath } from "node:url";
 const isDev = process.env.NODE_ENV !== "production";
 
 /**
+ * Origin of the opt-in Umami script, or null when analytics is disabled.
+ * Mirrors the validation in lib/analytics.ts (this file is plain ESM and
+ * can't import TS): a UUID website id, and an https:// script URL (or
+ * http://localhost for a self-hosted dev instance).
+ */
+function analyticsOrigin() {
+  const id = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID?.trim();
+  if (!id || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) return null;
+  try {
+    const url = new URL(process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL?.trim() || "https://cloud.umami.is/script.js");
+    if (url.protocol === "https:") return url.origin;
+    if (url.protocol === "http:" && ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname)) return url.origin;
+  } catch {
+    // invalid URL → disabled
+  }
+  return null;
+}
+const umamiOrigin = analyticsOrigin();
+const umamiScriptSrc = umamiOrigin ? ` ${umamiOrigin}` : "";
+// Umami Cloud's tracker loads from cloud.umami.is but beacons to gateway.umami.is.
+const umamiConnectSrc = !umamiOrigin
+  ? ""
+  : umamiOrigin === "https://cloud.umami.is"
+    ? ` ${umamiOrigin} https://gateway.umami.is`
+    : ` ${umamiOrigin}`;
+
+/**
  * Content-Security-Policy.
  *
  * Every asset is same-origin (next/font self-hosts Inter; images and video
- * live under /public), so no external origins are allowed.
+ * live under /public), so no external origins are allowed — except the
+ * opt-in Umami analytics origins, added only when analytics is enabled.
  *
  * script-src keeps 'unsafe-inline' because Next.js injects inline bootstrap
  * scripts and app/layout.tsx has an inline scroll-restoration script. A
@@ -23,12 +51,12 @@ const isDev = process.env.NODE_ENV !== "production";
  */
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}${umamiScriptSrc}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "media-src 'self'",
   "font-src 'self' data:",
-  `connect-src 'self'${isDev ? " ws: wss:" : ""}`,
+  `connect-src 'self'${isDev ? " ws: wss:" : ""}${umamiConnectSrc}`,
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

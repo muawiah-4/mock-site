@@ -80,6 +80,28 @@ public/frames/        240-frame scroll-sequence source images
 public/video/         Disassembly video used in Technical Exploration
 ```
 
+## Analytics (optional)
+
+Off by default: with no env vars set there is no analytics script, no CSP
+change and no network call. To enable [Umami](https://umami.is) (cookieless,
+no personal data), set these at build time (see `.env.example`):
+
+| Env var                        | Default                            |
+| ------------------------------ | ---------------------------------- |
+| `NEXT_PUBLIC_UMAMI_WEBSITE_ID` | unset (analytics off); must be a UUID |
+| `NEXT_PUBLIC_UMAMI_SCRIPT_URL` | `https://cloud.umami.is/script.js` (https only, or `http://localhost` for self-hosted dev) |
+
+When enabled, the script origin is added to `script-src` and `connect-src`
+(plus `https://gateway.umami.is`, where Umami Cloud sends events). The tracker
+respects Do Not Track, and is limited to `NEXT_PUBLIC_SITE_URL`'s hostname
+when that is set. Custom events (no free text; see `lib/analytics.ts`):
+
+- `hero_scroll_depth` — `percent`: 25 / 50 / 75 / 100, once each per page view
+- `configurator_change` — `option` (dial/size), `dial`, `size`
+- `add_to_bag` — `source` (configurator/product_page), `variant`, `quantity`
+- `cart_open` — `source` (header/mobile_menu)
+- `search_submit` — `length` bucket (1-3/4-10/11+), `has_results`; never the query
+
 ## Notes
 
 This is an unofficial concept project. It is not affiliated with, endorsed

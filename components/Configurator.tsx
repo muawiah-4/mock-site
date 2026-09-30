@@ -13,6 +13,7 @@ import {
   variantForDial,
 } from "@/lib/configurator";
 import { useCart } from "@/lib/cart-context";
+import { track } from "@/lib/analytics";
 import ProductPhoto from "@/components/ProductPhoto";
 import MagneticButton from "@/components/MagneticButton";
 
@@ -34,6 +35,7 @@ export default function Configurator() {
     );
     setSlug(next.slug);
     setJustAdded(false);
+    if (next.slug !== match.slug) track("configurator_change", { option: "dial", dial: next.dial.id, size: next.size.id });
   };
 
   const selectSize = (sizeId: string) => {
@@ -42,6 +44,7 @@ export default function Configurator() {
     setNotice("");
     setSlug(next.slug);
     setJustAdded(false);
+    if (next.slug !== match.slug) track("configurator_change", { option: "size", dial: next.dial.id, size: next.size.id });
   };
 
   return (
@@ -177,6 +180,7 @@ export default function Configurator() {
             <MagneticButton
               onClick={() => {
                 addToCart(match.slug);
+                track("add_to_bag", { source: "configurator", variant: match.slug, quantity: 1 });
                 setJustAdded(true);
                 setTimeout(() => open(), 300);
               }}
