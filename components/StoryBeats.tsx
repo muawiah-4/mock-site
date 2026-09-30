@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useMotionTemplate, useTransform, type MotionValue } from "framer-motion";
+import { motion, useTransform, type MotionValue } from "framer-motion";
 import { STORY_BEATS, type StoryBeat } from "@/lib/frames";
 import { useScrollControl } from "@/lib/scroll-context";
 import MagneticButton from "@/components/MagneticButton";
@@ -76,11 +76,11 @@ function Beat({
   // During the (now brief) crossfade window both cards are simultaneously
   // legible at mid-opacity, which read as visual clutter — a plain opacity
   // dissolve doesn't give the eye a way to tell "arriving" from "leaving."
-  // Deriving blur/scale straight from this beat's own opacity gives the
-  // fading one a soft depth cue instead, closer to a camera rack-focus.
-  const cardBlur = useTransform(opacity, [0, 1], [5, 0]);
+  // Deriving scale straight from this beat's own opacity gives the fading
+  // one a soft depth cue instead. (An animated filter blur here used to
+  // stack on the card's backdrop-blur over the redrawing canvas — too
+  // expensive to repaint every scroll frame.)
   const cardScale = useTransform(opacity, [0, 1], [0.97, 1]);
-  const cardFilter = useMotionTemplate`blur(${cardBlur}px)`;
 
   const justify =
     beat.align === "left" ? "justify-start" : beat.align === "right" ? "justify-end" : "justify-center";
@@ -101,7 +101,7 @@ function Beat({
 
   return (
     <motion.div
-      style={{ opacity, filter: cardFilter }}
+      style={{ opacity }}
       className={`story-copy pointer-events-none absolute inset-0 flex ${justify} ${verticalClass} px-6 md:px-16 lg:px-24`}
     >
       <motion.div
@@ -161,7 +161,7 @@ function Beat({
               </MagneticButton>
               {beat.cta.secondary && (
                 <a
-                  href="#specs"
+                  href="#configurator"
                   className="text-[14px] font-medium text-[var(--ink-900)] underline decoration-[var(--navy)]/40 underline-offset-4 transition hover:decoration-[var(--navy)]"
                 >
                   {beat.cta.secondary}

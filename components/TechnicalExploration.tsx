@@ -43,7 +43,8 @@ export default function TechnicalExploration() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const playOnceInView = () => {
-    if (!prefersReducedMotion) videoRef.current?.play();
+    // With preload="metadata", play() is what kicks off the full download.
+    if (!prefersReducedMotion) videoRef.current?.play().catch(() => {});
   };
 
   return (
@@ -88,7 +89,7 @@ export default function TechnicalExploration() {
               className="h-full w-full object-cover"
               muted
               playsInline
-              preload="auto"
+              preload="metadata"
             />
           </div>
 

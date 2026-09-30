@@ -15,7 +15,11 @@ const WOMAN_IMAGE = "/lifestyle/prx-lifestyle-woman2-hd.jpg";
  */
 export default function BlueDialExperience() {
   return (
-    <section className="relative w-full overflow-hidden bg-[#0d1a26] pt-4 md:pt-6">
+    <section
+      id="after-intro"
+      tabIndex={-1}
+      className="relative w-full overflow-hidden bg-[#0d1a26] pt-4 outline-none md:pt-6"
+    >
       <div className="relative grid grid-cols-1 sm:grid-cols-2">
         <div className="relative h-[50vh] sm:h-[68vh] md:h-[74vh] overflow-hidden">
           <motion.img

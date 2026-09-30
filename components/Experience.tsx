@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback, type ReactNode } from "react";
+import { useEffect, useRef, useCallback, type ReactNode } from "react";
 import { useScroll, useMotionValueEvent } from "framer-motion";
 import { TOTAL_FRAMES, frameSrc, frameForProgress } from "@/lib/frames";
 import { ScrollControlContext } from "@/lib/scroll-context";
@@ -9,23 +9,48 @@ import ExplodedTimeline from "@/components/ExplodedTimeline";
 import LightSweep from "@/components/LightSweep";
 
 const SEQUENCE_LENGTH_VH = 620;
+// Frames stream in the background with this many requests in flight, so the
+// frame the visitor is actually looking at never queues behind 239 others.
+const MAX_CONCURRENT_FRAMES = 6;
+
+const FRAME_IDLE = 0;
+const FRAME_LOADING = 1;
+const FRAME_LOADED = 2;
+const FRAME_FAILED = 3;
 
 export default function Experience({ children }: { children?: ReactNode }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imagesRef = useRef<HTMLImageElement[]>([]);
+  const imagesRef = useRef<(HTMLImageElement | undefined)[]>([]);
+  const statusRef = useRef<Uint8Array>(new Uint8Array(TOTAL_FRAMES));
   const currentFrameRef = useRef<number>(frameForProgress(0));
-  const [loaded, setLoaded] = useState(0);
-  const [ready, setReady] = useState(false);
+  // 0-based index of the frame last painted, or -1 before anything is drawn.
+  const drawnIndexRef = useRef<number>(-1);
+
+  /** Nearest successfully loaded frame to `target` (0-based), or -1. */
+  const nearestLoaded = useCallback((target: number) => {
+    const status = statusRef.current;
+    for (let d = 0; d < TOTAL_FRAMES; d++) {
+      if (target - d >= 0 && status[target - d] === FRAME_LOADED) return target - d;
+      if (target + d < TOTAL_FRAMES && status[target + d] === FRAME_LOADED) return target + d;
+    }
+    return -1;
+  }, []);
 
   const drawFrame = useCallback((frameNumber: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    const img = imagesRef.current[Math.round(frameNumber) - 1];
-    if (!img || !img.complete || img.naturalWidth === 0) return;
+    // Frames that haven't arrived yet (or failed) fall back to the closest
+    // one that has, so the canvas is never left blank mid-sequence.
+    const target = Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.round(frameNumber) - 1));
+    const index = nearestLoaded(target);
+    if (index === -1) return;
+    const img = imagesRef.current[index];
+    if (!img) return;
+    drawnIndexRef.current = index;
 
     const cw = canvas.width;
     const ch = canvas.height;
@@ -83,7 +108,7 @@ export default function Experience({ children }: { children?: ReactNode }) {
         dh
       );
     }
-  }, []);
+  }, [nearestLoaded]);
 
   const resizeCanvas = useCallback(() => {
     const canvas = canvasRef.current;
@@ -94,35 +119,6 @@ export default function Experience({ children }: { children?: ReactNode }) {
     canvas.height = Math.round(sticky.clientHeight * dpr);
     drawFrame(currentFrameRef.current);
   }, [drawFrame]);
-
-  useEffect(() => {
-    let cancelled = false;
-    let count = 0;
-    const imgs: HTMLImageElement[] = [];
-
-    for (let i = 1; i <= TOTAL_FRAMES; i++) {
-      const img = new Image();
-      img.decoding = "async";
-      img.src = frameSrc(i);
-      const onDone = () => {
-        count += 1;
-        if (!cancelled && (count % 6 === 0 || count === TOTAL_FRAMES)) {
-          setLoaded(count);
-        }
-        if (count === TOTAL_FRAMES && !cancelled) {
-          setReady(true);
-        }
-      };
-      img.onload = onDone;
-      img.onerror = onDone;
-      imgs.push(img);
-    }
-    imagesRef.current = imgs;
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   useEffect(() => {
     resizeCanvas();
@@ -136,14 +132,71 @@ export default function Experience({ children }: { children?: ReactNode }) {
   });
 
   useEffect(() => {
-    if (ready) {
-      const frame = frameForProgress(scrollYProgress.get());
-      currentFrameRef.current = frame;
-      resizeCanvas();
-      drawFrame(frame);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ready, resizeCanvas, drawFrame]);
+    let cancelled = false;
+    let inFlight = 0;
+    const status = statusRef.current;
+    const imgs = imagesRef.current;
+
+    const requestFrame = (index: number, highPriority: boolean) => {
+      status[index] = FRAME_LOADING;
+      inFlight += 1;
+      const img = new Image();
+      img.decoding = "async";
+      if (highPriority) img.fetchPriority = "high";
+      img.onload = () => {
+        if (cancelled) return;
+        inFlight -= 1;
+        status[index] = FRAME_LOADED;
+        imgs[index] = img;
+        // Repaint if this frame is a closer match for the scroll position
+        // than whatever is on the canvas now.
+        const target = Math.round(currentFrameRef.current) - 1;
+        const drawn = drawnIndexRef.current;
+        if (drawn === -1 || Math.abs(index - target) < Math.abs(drawn - target)) {
+          drawFrame(currentFrameRef.current);
+        }
+        pump();
+      };
+      img.onerror = () => {
+        if (cancelled) return;
+        inFlight -= 1;
+        status[index] = FRAME_FAILED;
+        pump();
+      };
+      img.src = frameSrc(index + 1);
+    };
+
+    // Fill free slots with the not-yet-requested frames nearest the one
+    // currently on screen, so scrubbing in either direction finds its
+    // neighbours already loaded.
+    const pump = () => {
+      while (inFlight < MAX_CONCURRENT_FRAMES) {
+        const target = Math.round(currentFrameRef.current) - 1;
+        let next = -1;
+        for (let d = 0; d < TOTAL_FRAMES && next === -1; d++) {
+          if (target - d >= 0 && status[target - d] === FRAME_IDLE) next = target - d;
+          else if (target + d < TOTAL_FRAMES && status[target + d] === FRAME_IDLE) next = target + d;
+        }
+        if (next === -1) return;
+        requestFrame(next, false);
+      }
+    };
+
+    // The frame for the current scroll position (frame 240 at the top of
+    // the page) goes first, on its own, at high priority.
+    currentFrameRef.current = frameForProgress(scrollYProgress.get());
+    const first = Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.round(currentFrameRef.current) - 1));
+    requestFrame(first, true);
+
+    return () => {
+      cancelled = true;
+      // Anything still in flight is abandoned; mark it requestable again so
+      // a remount (e.g. Strict Mode) doesn't treat it as permanently pending.
+      for (let i = 0; i < TOTAL_FRAMES; i++) {
+        if (status[i] === FRAME_LOADING) status[i] = FRAME_IDLE;
+      }
+    };
+  }, [drawFrame, scrollYProgress]);
 
   useMotionValueEvent(scrollYProgress, "change", (v) => {
     const frame = frameForProgress(v);
@@ -161,10 +214,16 @@ export default function Experience({ children }: { children?: ReactNode }) {
     window.scrollTo({ top: target, behavior: "smooth" });
   }, []);
 
-  const pct = Math.round((loaded / TOTAL_FRAMES) * 100);
-
   return (
     <ScrollControlContext.Provider value={{ progress: scrollYProgress, scrollToFraction }}>
+      {/* Keyboard users otherwise have to page through ~6 viewports of
+          scroll-driven sequence to reach the rest of the page. */}
+      <a
+        href="#after-intro"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-white focus:px-5 focus:py-2.5 focus:text-[13px] focus:font-medium focus:text-[var(--ink-900)] focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-[var(--navy)]"
+      >
+        Skip intro
+      </a>
       <div ref={containerRef} style={{ height: `${SEQUENCE_LENGTH_VH}vh` }} className="relative">
         <div ref={stickyRef} className="sticky top-0 h-screen w-full overflow-hidden">
           <div className="viewport-vignette absolute inset-0" />
@@ -174,24 +233,6 @@ export default function Experience({ children }: { children?: ReactNode }) {
             <StoryBeats />
           </div>
           <ExplodedTimeline />
-
-          <div
-            aria-hidden
-            className={`pointer-events-none absolute inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-[var(--bg-0)] transition-opacity duration-700 ${
-              ready ? "opacity-0" : "opacity-100"
-            }`}
-          >
-            <div className="text-[11px] uppercase tracking-[0.3em] text-[var(--ink-400)]">
-              Loading sequence
-            </div>
-            <div className="h-px w-40 overflow-hidden bg-black/10">
-              <div
-                className="h-full bg-[var(--navy)] transition-all duration-200 ease-out"
-                style={{ width: `${pct}%` }}
-              />
-            </div>
-            <div className="font-mono text-[11px] text-[var(--ink-400)]">{pct}%</div>
-          </div>
         </div>
       </div>
 
