@@ -173,7 +173,7 @@ export default function ProductDetail({ variant }: { variant: WatchVariant }) {
                   setTimeout(() => open(), 300);
                 }}
                 className="btn-primary flex-1 rounded-full py-3.5 text-[14px] font-medium text-white transition-transform hover:scale-[1.01] active:scale-[0.99]"
-                strength={10}
+                maxOffsetPx={5}
               >
                 {added ? "Added ✓" : "Add to Bag"}
               </MagneticButton>

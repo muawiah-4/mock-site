@@ -181,7 +181,7 @@ export default function Configurator() {
                 setTimeout(() => open(), 300);
               }}
               className="btn-primary w-full rounded-full py-3.5 text-[14px] font-medium text-white transition-transform hover:scale-[1.01] active:scale-[0.99]"
-              strength={10}
+              maxOffsetPx={5}
             >
               {justAdded ? "Added ✓" : "Add to Bag"}
             </MagneticButton>

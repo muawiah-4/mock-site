@@ -135,7 +135,7 @@ export default function CartSidebar() {
                 <MagneticButton
                   onClick={() => setCheckedOut(true)}
                   className="btn-primary w-full rounded-full py-3.5 text-[14px] font-medium text-white transition-transform hover:scale-[1.01] active:scale-[0.99]"
-                  strength={8}
+                  maxOffsetPx={4}
                 >
                   {checkedOut ? "Order placed — thank you" : "Checkout"}
                 </MagneticButton>

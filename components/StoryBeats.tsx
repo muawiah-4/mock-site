@@ -168,7 +168,7 @@ function Beat({
             >
               <MagneticButton
                 href={beat.cta.primary.href}
-                strength={10}
+                maxOffsetPx={5}
                 className="btn-primary inline-block rounded-full px-7 py-3 text-[14px] font-medium text-white transition-transform hover:scale-[1.03] active:scale-[0.98]"
               >
                 {beat.cta.primary.label}
