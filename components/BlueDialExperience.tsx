@@ -3,8 +3,8 @@
 import { motion } from "framer-motion";
 import GhostHeading from "@/components/GhostHeading";
 
-const MAN_IMAGE = "/lifestyle/prx-lifestyle-man2-hd.jpg";
-const WOMAN_IMAGE = "/lifestyle/prx-lifestyle-woman2-hd.jpg";
+const MAN_IMAGE = "/lifestyle/prx-lifestyle-man2-hd.webp";
+const WOMAN_IMAGE = "/lifestyle/prx-lifestyle-woman2-hd.webp";
 
 /**
  * Two different photos, flush side by side, each given a slow one-time
@@ -25,6 +25,10 @@ export default function BlueDialExperience() {
           <motion.img
             src={MAN_IMAGE}
             alt="A man wearing the TISSOT PRX on his wrist"
+            width={1440}
+            height={1440}
+            loading="lazy"
+            decoding="async"
             className="h-full w-full object-cover [filter:saturate(1.06)_contrast(1.04)]"
             initial={{ scale: 1.1, opacity: 0 }}
             whileInView={{ scale: 1, opacity: 1 }}
@@ -37,6 +41,10 @@ export default function BlueDialExperience() {
           <motion.img
             src={WOMAN_IMAGE}
             alt="A woman wearing a Tissot watch"
+            width={1341}
+            height={1341}
+            loading="lazy"
+            decoding="async"
             className="h-full w-full object-cover [filter:saturate(1.06)_contrast(1.04)]"
             initial={{ scale: 1.1, opacity: 0 }}
             whileInView={{ scale: 1, opacity: 1 }}

@@ -18,13 +18,17 @@ const NEWS = [
     title: "Tissot Sprint highlights: Red Bull Grand Prix of San Marino and the Rimini Riviera",
     date: "Sep 12, 2026",
     source: "motogp.com",
-    image: "/news/motogp-banner.jpg",
+    image: "/news/motogp-banner.webp",
+    width: 1200,
+    height: 630,
   },
   {
     title: "Vote for your TISSOT MVP and win a watch",
     date: "Sep 8, 2026",
     source: "FIBA",
-    image: "/news/fiba-mvp-lineup.jpg",
+    image: "/news/fiba-mvp-lineup.webp",
+    width: 1270,
+    height: 724,
   },
   {
     title: "Over 170 years of Swiss watchmaking",
@@ -142,7 +146,15 @@ export default function NewsCarousel() {
                 {"image" in item ? (
                   <>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      width={item.width}
+                      height={item.height}
+                      loading="lazy"
+                      decoding="async"
+                      className="h-full w-full object-cover"
+                    />
                     {"source" in item && (
                       <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full bg-black/50 px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.2em] text-white backdrop-blur-md">
                         <span className="h-1.5 w-1.5 rounded-full bg-[var(--navy-light)]" />

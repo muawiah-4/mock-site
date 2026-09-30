@@ -53,6 +53,7 @@ export default function ProductDetail({ variant }: { variant: WatchVariant }) {
                   src={variant.heroImage}
                   alt={`${variant.name} — ${variant.dial.label}`}
                   padding="10%"
+                  priority
                   imgClassName="transition-transform duration-500 ease-out group-hover:scale-[1.06]"
                 />
                 <span className="pointer-events-none absolute bottom-4 right-4 flex items-center gap-1.5 rounded-full bg-white/80 px-3 py-1.5 text-[11px] font-medium text-[var(--ink-600)] opacity-0 shadow-sm backdrop-blur-md ring-1 ring-black/[0.04] transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">

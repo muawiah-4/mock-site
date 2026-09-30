@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 
-const LIFESTYLE_IMAGE = "/lifestyle/prx-lifestyle-red-hd.jpg";
+const LIFESTYLE_IMAGE = "/lifestyle/prx-lifestyle-red-hd.webp";
 
 /**
  * An emotional beat before the technical deep-dive — the source photo is
@@ -25,6 +25,10 @@ export default function LifestyleMoment() {
           <img
             src={LIFESTYLE_IMAGE}
             alt="A woman checking her Tissot watch by a lake"
+            width={1440}
+            height={1440}
+            loading="lazy"
+            decoding="async"
             className="h-full w-full object-cover"
           />
         </motion.div>

@@ -11,12 +11,15 @@ export default function ProductPhoto({
   padding = "13%",
   className = "",
   imgClassName = "",
+  priority = false,
 }: {
   src: string;
   alt: string;
   padding?: string;
   className?: string;
   imgClassName?: string;
+  /** Set only on the page's LCP image: loads eagerly at high priority. */
+  priority?: boolean;
 }) {
   return (
     <div className={`relative h-full w-full bg-white ${className}`}>
@@ -26,7 +29,9 @@ export default function ProductPhoto({
           src={src}
           alt={alt}
           className={`h-full w-full object-contain ${imgClassName}`}
-          loading="lazy"
+          loading={priority ? "eager" : "lazy"}
+          decoding="async"
+          fetchPriority={priority ? "high" : undefined}
         />
       </div>
     </div>
