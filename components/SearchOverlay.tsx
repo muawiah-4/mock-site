@@ -4,8 +4,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { CATALOG, getCollection, formatPrice } from "@/lib/catalog";
-
-const RECENT_KEY = "prx-recent-searches";
+import { useDialogA11y } from "@/lib/use-dialog-a11y";
+import { searchLengthBucket, track } from "@/lib/analytics";
+import { MAX_RECENT, MAX_TERM_LENGTH, RECENT_KEY, parseRecent } from "@/lib/recent-searches";
 
 export default function SearchOverlay({
   open,
@@ -17,26 +18,20 @@ export default function SearchOverlay({
   const [query, setQuery] = useState("");
   const [recent, setRecent] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useDialogA11y({ open, onClose, containerRef: dialogRef, initialFocusRef: inputRef, lockScroll: true });
 
   useEffect(() => {
     if (open) {
       setQuery("");
       try {
-        setRecent(JSON.parse(localStorage.getItem(RECENT_KEY) ?? "[]"));
+        setRecent(parseRecent(localStorage.getItem(RECENT_KEY)));
       } catch {
         setRecent([]);
       }
-      requestAnimationFrame(() => inputRef.current?.focus());
     }
   }, [open]);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    if (open) window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -50,9 +45,10 @@ export default function SearchOverlay({
   }, [query]);
 
   const commitSearch = (term: string) => {
-    if (!term.trim()) return;
+    const t = term.trim().slice(0, MAX_TERM_LENGTH);
+    if (!t) return;
     try {
-      const next = [term, ...recent.filter((r) => r !== term)].slice(0, 5);
+      const next = [t, ...recent.filter((r) => r !== t)].slice(0, MAX_RECENT);
       localStorage.setItem(RECENT_KEY, JSON.stringify(next));
       setRecent(next);
     } catch {
@@ -64,6 +60,7 @@ export default function SearchOverlay({
     <AnimatePresence>
       {open && (
         <motion.div
+          ref={dialogRef}
           className="fixed inset-0 z-[80] flex flex-col bg-white/95 backdrop-blur-xl"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -78,9 +75,9 @@ export default function SearchOverlay({
               initial={{ y: -16, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.3, delay: 0.05 }}
-              className="flex items-center gap-4 border-b border-black/10 pb-4"
+              className="flex items-center gap-4 border-b border-black/10 pb-4 transition-colors focus-within:border-[var(--navy)]"
             >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="shrink-0 text-[var(--ink-400)]">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className="shrink-0 text-[var(--ink-300)]">
                 <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.6" />
                 <path d="M20 20L16.5 16.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
               </svg>
@@ -89,7 +86,14 @@ export default function SearchOverlay({
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") commitSearch(query);
+                  if (e.key === "Enter") {
+                    commitSearch(query);
+                    // Query text is never sent — only a coarse length bucket and whether anything matched.
+                    const length = query.trim().length;
+                    if (length > 0) {
+                      track("search_submit", { length: searchLengthBucket(length), has_results: results.length > 0 });
+                    }
+                  }
                 }}
                 placeholder="Search PRX, collections, dial colors…"
                 className="w-full bg-transparent text-2xl font-medium tracking-tight text-[var(--ink-900)] placeholder:text-[var(--ink-400)] focus:outline-none md:text-3xl"

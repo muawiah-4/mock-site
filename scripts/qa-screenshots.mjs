@@ -1,12 +1,17 @@
+// Usage: npm run dev, then `[CHROME_PATH=...] [BASE_URL=http://localhost:3002] [QA_OUT_DIR=/tmp/prx-qa] [HEADFUL=1] node scripts/qa-screenshots.mjs`
 import puppeteer from "puppeteer-core";
 import fs from "node:fs";
 
 const OUT = process.env.QA_OUT_DIR || "/tmp/prx-qa";
+const BASE_URL = (process.env.BASE_URL || "http://localhost:3002").replace(/\/+$/, "");
+const CHROME_PATH =
+  process.env.CHROME_PATH || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+const HEADFUL = process.env.HEADFUL === "1";
 fs.mkdirSync(OUT, { recursive: true });
 
 const browser = await puppeteer.launch({
-  executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-  headless: false,
+  executablePath: CHROME_PATH,
+  headless: !HEADFUL,
   defaultViewport: { width: 1440, height: 900, deviceScaleFactor: 1 },
 });
 
@@ -26,7 +31,7 @@ const logs = [];
 // --- Home page ---
 const home = await browser.newPage();
 await collectErrors(home, logs);
-await home.goto("http://localhost:3000", { waitUntil: "networkidle0", timeout: 60000 });
+await home.goto(BASE_URL, { waitUntil: "networkidle0", timeout: 60000 });
 await new Promise((r) => setTimeout(r, 4500));
 await shot(home, "home-hero");
 
@@ -86,7 +91,7 @@ await home.close();
 // --- Collection page ---
 const coll = await browser.newPage();
 await collectErrors(coll, logs);
-await coll.goto("http://localhost:3000/collection", { waitUntil: "networkidle0", timeout: 60000 });
+await coll.goto(`${BASE_URL}/collection`, { waitUntil: "networkidle0", timeout: 60000 });
 await new Promise((r) => setTimeout(r, 2500));
 await shot(coll, "collection-page");
 await coll.close();
@@ -94,7 +99,7 @@ await coll.close();
 // --- PDP page ---
 const pdp = await browser.newPage();
 await collectErrors(pdp, logs);
-await pdp.goto("http://localhost:3000/watch/prx-powermatic-80-blue", { waitUntil: "networkidle0", timeout: 60000 });
+await pdp.goto(`${BASE_URL}/watch/prx-powermatic-80-blue`, { waitUntil: "networkidle0", timeout: 60000 });
 await new Promise((r) => setTimeout(r, 2500));
 await shot(pdp, "pdp-top");
 await pdp.evaluate(() => window.scrollTo({ top: 900, behavior: "instant" }));
@@ -106,7 +111,7 @@ await pdp.close();
 const mobile = await browser.newPage();
 await mobile.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 });
 await collectErrors(mobile, logs);
-await mobile.goto("http://localhost:3000", { waitUntil: "networkidle0", timeout: 60000 });
+await mobile.goto(BASE_URL, { waitUntil: "networkidle0", timeout: 60000 });
 await new Promise((r) => setTimeout(r, 4000));
 await shot(mobile, "mobile-hero");
 await mobile.click('button[aria-label="Toggle menu"]');

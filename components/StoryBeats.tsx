@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useMotionTemplate, useTransform, type MotionValue } from "framer-motion";
+import { motion, useTransform, type MotionValue } from "framer-motion";
 import { STORY_BEATS, type StoryBeat } from "@/lib/frames";
 import { useScrollControl } from "@/lib/scroll-context";
 import MagneticButton from "@/components/MagneticButton";
@@ -21,10 +21,16 @@ function useBeatOpacity(
 ) {
   const [s, e] = range;
   const hw = Math.min(0.013, (e - s) / 4);
-  if (isFirst && isLast) return useTransform(progress, [s, e], [1, 1]);
-  if (isFirst) return useTransform(progress, [s, e - hw, e + hw], [1, 1, 0]);
-  if (isLast) return useTransform(progress, [s - hw, s + hw, e], [0, 1, 1]);
-  return useTransform(progress, [s - hw, s + hw, e - hw, e + hw], [0, 1, 1, 0]);
+  // Pick the keyframes first so useTransform is always called exactly once.
+  const [input, output] =
+    isFirst && isLast
+      ? [[s, e], [1, 1]]
+      : isFirst
+        ? [[s, e - hw, e + hw], [1, 1, 0]]
+        : isLast
+          ? [[s - hw, s + hw, e], [0, 1, 1]]
+          : [[s - hw, s + hw, e - hw, e + hw], [0, 1, 1, 0]];
+  return useTransform(progress, input, output);
 }
 
 /** Apogee-style one-time entrance choreography — plays once on page load,
@@ -76,11 +82,16 @@ function Beat({
   // During the (now brief) crossfade window both cards are simultaneously
   // legible at mid-opacity, which read as visual clutter — a plain opacity
   // dissolve doesn't give the eye a way to tell "arriving" from "leaving."
-  // Deriving blur/scale straight from this beat's own opacity gives the
-  // fading one a soft depth cue instead, closer to a camera rack-focus.
-  const cardBlur = useTransform(opacity, [0, 1], [5, 0]);
+  // Deriving scale straight from this beat's own opacity gives the fading
+  // one a soft depth cue instead. (An animated filter blur here used to
+  // stack on the card's backdrop-blur over the redrawing canvas — too
+  // expensive to repaint every scroll frame.)
   const cardScale = useTransform(opacity, [0, 1], [0.97, 1]);
-  const cardFilter = useMotionTemplate`blur(${cardBlur}px)`;
+  // The card only fades, it never unmounts — so without this a CTA at
+  // opacity 0 would still be clickable and reachable by Tab. visibility:hidden
+  // takes it out of the tab order, pointer hit-testing and the a11y tree
+  // until its beat is actually on screen.
+  const ctaVisibility = useTransform(opacity, (o) => (o > 0.5 ? "visible" : "hidden"));
 
   const justify =
     beat.align === "left" ? "justify-start" : beat.align === "right" ? "justify-end" : "justify-center";
@@ -101,14 +112,14 @@ function Beat({
 
   return (
     <motion.div
-      style={{ opacity, filter: cardFilter }}
+      style={{ opacity }}
       className={`story-copy pointer-events-none absolute inset-0 flex ${justify} ${verticalClass} px-6 md:px-16 lg:px-24`}
     >
       <motion.div
         style={{ x: slide, y: rise, scale: cardScale }}
         className={`flex max-w-xl flex-col gap-4 ${textAlign} ${beat.align !== "center" ? "" : "mx-auto"}`}
       >
-        <div className="rounded-3xl bg-white/90 px-7 py-7 shadow-[0_20px_60px_-25px_rgba(20,23,26,0.35)] backdrop-blur-2xl ring-1 ring-black/[0.04] md:px-9 md:py-8">
+        <div className="rounded-3xl bg-white/90 px-7 py-7 shadow-float backdrop-blur-2xl ring-1 ring-black/[0.04] md:px-9 md:py-8">
           {beat.eyebrow &&
             (isHero ? (
               <Reveal delayMs={250}>
@@ -151,23 +162,26 @@ function Beat({
           )}
 
           {beat.cta && (
-            <div className="pointer-events-auto mt-7 flex flex-wrap items-center gap-4 justify-center">
+            <motion.div
+              style={{ visibility: ctaVisibility }}
+              className="pointer-events-auto mt-7 flex flex-wrap items-center gap-4 justify-center"
+            >
               <MagneticButton
-                href="/collection"
-                strength={10}
+                href={beat.cta.primary.href}
+                maxOffsetPx={5}
                 className="btn-primary inline-block rounded-full px-7 py-3 text-[14px] font-medium text-white transition-transform hover:scale-[1.03] active:scale-[0.98]"
               >
-                {beat.cta.primary}
+                {beat.cta.primary.label}
               </MagneticButton>
               {beat.cta.secondary && (
                 <a
-                  href="#specs"
+                  href={beat.cta.secondary.href}
                   className="text-[14px] font-medium text-[var(--ink-900)] underline decoration-[var(--navy)]/40 underline-offset-4 transition hover:decoration-[var(--navy)]"
                 >
-                  {beat.cta.secondary}
+                  {beat.cta.secondary.label}
                 </a>
               )}
-            </div>
+            </motion.div>
           )}
           {beat.micro && (
             <p className="mt-4 text-center text-[12px] text-[var(--ink-400)]">{beat.micro}</p>

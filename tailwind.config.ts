@@ -5,30 +5,20 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        steel: {
-          50: "#f4f5f6",
-          100: "#e8eaeb",
-          200: "#d6d9db",
-          300: "#c2c6c8",
-          400: "#a6abaf",
-          500: "#888e92",
-          600: "#6b7276",
-          700: "#53585c",
-          800: "#3a3e41",
-          900: "#232527",
+        // Dark section surfaces — values live in app/globals.css as RGB
+        // channels so opacity modifiers work (e.g. bg-dark/90).
+        dark: {
+          DEFAULT: "rgb(var(--bg-dark) / <alpha-value>)",
+          2: "rgb(var(--bg-dark-2) / <alpha-value>)",
         },
-        navy: {
-          50: "#eaf1f8",
-          100: "#cfe0ee",
-          200: "#9ec0dd",
-          300: "#5f92bd",
-          400: "#2f6699",
-          500: "#1c3f5e",
-          600: "#15324c",
-          700: "#0f253a",
-          800: "#0a1a29",
-          900: "#060f18",
-        },
+      },
+      boxShadow: {
+        // Photo / media blocks resting on the light page.
+        media: "0 30px 80px -40px rgba(20, 23, 26, 0.45)",
+        // Floating surfaces: dropdowns, glass panels, story cards.
+        float: "0 24px 60px -24px rgba(20, 23, 26, 0.35)",
+        // Hover lift on product cards; also the mobile menu sheet.
+        lift: "0 30px 70px -30px rgba(20, 23, 26, 0.35)",
       },
       fontFamily: {
         sans: [

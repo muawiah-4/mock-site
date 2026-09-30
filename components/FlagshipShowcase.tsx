@@ -21,7 +21,7 @@ export default function FlagshipShowcase() {
     { value: variant.specs.caseDiameter, label: "Case diameter" },
     { value: "80h", label: "Power reserve" },
     { value: variant.specs.waterResistance.split(" / ")[0], label: "Water resistance" },
-    { value: "138", label: "Hand-assembled parts" },
+    { value: "Sapphire", label: "Scratch-resistant crystal" },
   ];
 
   return (
@@ -48,7 +48,7 @@ export default function FlagshipShowcase() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true, margin: "-10%" }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="relative aspect-square w-full overflow-hidden rounded-[2rem] shadow-[0_40px_100px_-40px_rgba(20,23,26,0.5)]"
+            className="relative aspect-square w-full overflow-hidden rounded-[2rem] shadow-media"
           >
             <ProductPhoto
               src={variant.heroImage}

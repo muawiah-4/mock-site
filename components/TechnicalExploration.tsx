@@ -43,11 +43,12 @@ export default function TechnicalExploration() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const playOnceInView = () => {
-    if (!prefersReducedMotion) videoRef.current?.play();
+    // With preload="metadata", play() is what kicks off the full download.
+    if (!prefersReducedMotion) videoRef.current?.play().catch(() => {});
   };
 
   return (
-    <section className="bg-[#05060a] px-6 py-20 md:py-28">
+    <section className="bg-dark px-6 py-20 md:py-28">
       <div className="mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -88,13 +89,13 @@ export default function TechnicalExploration() {
               className="h-full w-full object-cover"
               muted
               playsInline
-              preload="auto"
+              preload="metadata"
             />
           </div>
 
           <div className="grid grid-cols-1 gap-px bg-white/[0.06] sm:grid-cols-2">
             {PARTS.map((p) => (
-              <div key={p.label} className="bg-[#0a0d14] px-5 py-5 md:px-8 md:py-6">
+              <div key={p.label} className="bg-dark-2 px-5 py-5 md:px-8 md:py-6">
                 <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-white">{p.label}</p>
                 <p className="mt-1.5 text-[13px] leading-relaxed text-white/70">{p.copy}</p>
               </div>

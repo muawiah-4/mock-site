@@ -3,8 +3,8 @@
 import { motion } from "framer-motion";
 import GhostHeading from "@/components/GhostHeading";
 
-const MAN_IMAGE = "/lifestyle/prx-lifestyle-man2-hd.jpg";
-const WOMAN_IMAGE = "/lifestyle/prx-lifestyle-woman2-hd.jpg";
+const MAN_IMAGE = "/lifestyle/prx-lifestyle-man2-hd.webp";
+const WOMAN_IMAGE = "/lifestyle/prx-lifestyle-woman2-hd.webp";
 
 /**
  * Two different photos, flush side by side, each given a slow one-time
@@ -15,12 +15,20 @@ const WOMAN_IMAGE = "/lifestyle/prx-lifestyle-woman2-hd.jpg";
  */
 export default function BlueDialExperience() {
   return (
-    <section className="relative w-full overflow-hidden bg-[#0d1a26] pt-4 md:pt-6">
+    <section
+      id="after-intro"
+      tabIndex={-1}
+      className="relative w-full overflow-hidden bg-dark-2 pt-4 outline-none md:pt-6"
+    >
       <div className="relative grid grid-cols-1 sm:grid-cols-2">
         <div className="relative h-[50vh] sm:h-[68vh] md:h-[74vh] overflow-hidden">
           <motion.img
             src={MAN_IMAGE}
             alt="A man wearing the TISSOT PRX on his wrist"
+            width={1440}
+            height={1440}
+            loading="lazy"
+            decoding="async"
             className="h-full w-full object-cover [filter:saturate(1.06)_contrast(1.04)]"
             initial={{ scale: 1.1, opacity: 0 }}
             whileInView={{ scale: 1, opacity: 1 }}
@@ -33,6 +41,10 @@ export default function BlueDialExperience() {
           <motion.img
             src={WOMAN_IMAGE}
             alt="A woman wearing a Tissot watch"
+            width={1341}
+            height={1341}
+            loading="lazy"
+            decoding="async"
             className="h-full w-full object-cover [filter:saturate(1.06)_contrast(1.04)]"
             initial={{ scale: 1.1, opacity: 0 }}
             whileInView={{ scale: 1, opacity: 1 }}
@@ -61,11 +73,8 @@ export default function BlueDialExperience() {
           className="relative z-10 mx-auto max-w-2xl text-center"
         >
           <p className="text-[clamp(1.15rem,2.2vw,1.6rem)] italic leading-relaxed text-white/90">
-            The best watches don't ask for attention. They just keep it.
+            The best watches don&rsquo;t ask for attention. They just keep it.
           </p>
-          <div className="mt-5 text-[11px] font-medium uppercase tracking-[0.28em] text-white/50">
-            — Tissot
-          </div>
         </motion.div>
       </div>
     </section>

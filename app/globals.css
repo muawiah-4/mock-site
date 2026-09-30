@@ -6,10 +6,19 @@
   --bg-0: #d7dadc;
   --bg-1: #c7cbcd;
   --ink-900: #14171a;
-  --ink-600: rgba(20, 23, 26, 0.62);
-  --ink-400: rgba(20, 23, 26, 0.4);
+  /* Text tokens. Both clear WCAG AA (4.5:1) on every light surface they sit
+     on — white, --bg-0, --bg-1 and the hero vignette — with --ink-600 kept a
+     step darker than --ink-400 so the hierarchy holds. */
+  --ink-600: rgba(20, 23, 26, 0.76);
+  --ink-400: rgba(20, 23, 26, 0.68);
+  /* Non-text only (icons, glyph indicators): >= 3:1 on white / --bg-0. */
+  --ink-300: rgba(20, 23, 26, 0.5);
   --navy: #1c3f5e;
   --navy-light: #3f7ab0;
+  /* Dark sections, as space-separated RGB channels so Tailwind's
+     `dark` / `dark-2` colours can take opacity modifiers (bg-dark/90). */
+  --bg-dark: 10 10 11; /* #0a0a0b — near-black section base */
+  --bg-dark-2: 13 26 38; /* #0d1a26 — navy-tinted raised dark surface */
 }
 
 * {
@@ -38,8 +47,10 @@ body {
   );
 }
 
+/* Top stop kept light enough that --ink-600 body copy (≥5:1) and the navy
+   eyebrow (≥4.9:1) stay AA across the whole fade. */
 .tail-fade {
-  background: linear-gradient(180deg, #7d8386 0%, #a7acaf 30%, #c7cbcd 60%, #d7dadc 100%);
+  background: linear-gradient(180deg, #aab0b2 0%, #b8bdbf 30%, #c7cbcd 60%, #d7dadc 100%);
 }
 
 ::selection {

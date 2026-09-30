@@ -3,52 +3,34 @@
 import { useState } from "react";
 import Link from "next/link";
 
+// Every entry points at a real in-site route or anchor. Service, legal and
+// help pages that a real retailer would have don't exist in this concept, so
+// they're left out rather than linked to "#".
 const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
   {
     title: "Brand",
     links: [
-      { label: "About us", href: "#" },
+      { label: "Collection", href: "/collection" },
+      { label: "PRX", href: "/collection/prx" },
       { label: "Men", href: "/collection" },
       { label: "Women", href: "/collection" },
-      { label: "Collection", href: "/collection" },
-      { label: "Straps", href: "#" },
-      { label: "News", href: "#" },
+      { label: "News", href: "/#news" },
     ],
   },
   {
     title: "Services",
     links: [
       { label: "Find a store", href: "/#stores" },
-      { label: "Customer service", href: "#" },
-      { label: "Stop fake", href: "#" },
-      { label: "Register your watch", href: "#" },
-      { label: "Corporate gift", href: "#" },
       { label: "Watch Finder", href: "/collection" },
-      { label: "Check service status", href: "#" },
+      { label: "Configure yours", href: "/#configurator" },
+      { label: "Straps", href: "/#configurator" },
     ],
   },
   {
-    title: "Legal",
+    title: "Explore",
     links: [
-      { label: "Conditions of sales", href: "#" },
-      { label: "Privacy notice", href: "#" },
-      { label: "Cookie notice", href: "#" },
-      { label: "Supplemental privacy notice", href: "#" },
-      { label: "Cookie settings", href: "#" },
-      { label: "Terms of use", href: "#" },
-      { label: "Accessibility", href: "#" },
-    ],
-  },
-  {
-    title: "Help and contacts",
-    links: [
-      { label: "Need help?", href: "#" },
-      { label: "Strap size guide", href: "#" },
-      { label: "Delivery & returns conditions", href: "#" },
-      { label: "Request a return", href: "#" },
-      { label: "Track an order", href: "#" },
-      { label: "Download an invoice", href: "#" },
-      { label: "Careers", href: "#" },
+      { label: "Gallery", href: "/#gallery" },
+      { label: "Beyond PRX", href: "/#collection" },
     ],
   },
 ];
@@ -96,9 +78,9 @@ export default function Footer() {
   const [region, setRegion] = useState(REGIONS[0]);
 
   return (
-    <footer className="bg-[#0a0a0b] text-white">
+    <footer className="bg-dark text-white">
       <div className="mx-auto max-w-7xl px-6 py-16 md:px-10">
-        <div className="grid grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-3 lg:grid-cols-4">
           {COLUMNS.map((col) => (
             <div key={col.title}>
               <p className="mb-5 text-[14px] font-medium text-white">{col.title}</p>
@@ -144,32 +126,16 @@ export default function Footer() {
               className="bg-transparent text-white focus:outline-none"
             >
               {REGIONS.map((r) => (
-                <option key={r} className="bg-[#0a0a0b]">
+                <option key={r} className="bg-dark">
                   {r}
                 </option>
               ))}
             </select>
-            <span className="text-white/40">|</span>
-            <button className="underline underline-offset-2 hover:text-white">Change country</button>
           </label>
 
-          <div className="flex items-center gap-3 text-[13px] text-white/70">
-            <span className="text-lg leading-none">+</span>
-            <span>Follow us on social media</span>
-            <div className="flex gap-3 text-white/55">
-              <a href="#" aria-label="Instagram" className="hover:text-white">
-                IG
-              </a>
-              <a href="#" aria-label="Facebook" className="hover:text-white">
-                FB
-              </a>
-              <a href="#" aria-label="YouTube" className="hover:text-white">
-                YT
-              </a>
-            </div>
-          </div>
-
-          <p className="text-[12px] text-white/40">Tissot Copyrights {new Date().getFullYear()}</p>
+          <p className="text-[12px] text-white/55">
+            &copy; {new Date().getFullYear()} Concept project &middot; Not affiliated with Tissot SA or the Swatch Group.
+          </p>
         </div>
       </div>
 
@@ -187,7 +153,7 @@ export default function Footer() {
         </span>
       </div>
 
-      <p className="border-t border-white/10 px-6 py-4 text-center text-[11px] text-white/30 md:px-10">
+      <p className="border-t border-white/10 px-6 py-4 text-center text-[11px] text-white/55 md:px-10">
         Concept scrollytelling experience — not an official Tissot property.
       </p>
     </footer>

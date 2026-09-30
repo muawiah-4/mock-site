@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
+import { motion, useMotionValueEvent, useTransform } from "framer-motion";
 import { useScrollControl } from "@/lib/scroll-context";
 
 const CHAPTERS = [
@@ -11,19 +12,26 @@ const CHAPTERS = [
   { label: "Full Exploded View", range: [0.7, 1] as [number, number] },
 ];
 
+function chapterForProgress(p: number) {
+  const i = CHAPTERS.findIndex((c) => p >= c.range[0] && p < c.range[1]);
+  return i === -1 ? CHAPTERS.length - 1 : i;
+}
+
 export default function ExplodedTimeline() {
   const { progress, scrollToFraction } = useScrollControl();
-  const [p, setP] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
+  // Only the chapter label needs React; it re-renders when the chapter
+  // changes, not on every scroll frame. The fill/thumb and the slider's
+  // aria-valuenow follow the progress motion value directly.
+  const [chapterIdx, setChapterIdx] = useState(() => chapterForProgress(progress.get()));
+  const fillWidth = useTransform(progress, (v) => `${v * 100}%`);
 
-  useEffect(() => {
-    const unsub = progress.on("change", (v) => setP(v));
-    return () => unsub();
-  }, [progress]);
-
-  const activeIndex = CHAPTERS.findIndex((c) => p >= c.range[0] && p < c.range[1]);
-  const chapterIdx = activeIndex === -1 ? CHAPTERS.length - 1 : activeIndex;
+  useMotionValueEvent(progress, "change", (v) => {
+    const next = chapterForProgress(v);
+    if (next !== chapterIdx) setChapterIdx(next);
+    trackRef.current?.setAttribute("aria-valuenow", String(Math.round(v * 100)));
+  });
 
   const scrubFromClientX = useCallback(
     (clientX: number) => {
@@ -50,7 +58,7 @@ export default function ExplodedTimeline() {
           aria-label="Watch construction progress"
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-valuenow={Math.round(p * 100)}
+          aria-valuenow={Math.round(progress.get() * 100)}
           onPointerDown={(e) => {
             dragging.current = true;
             (e.target as Element).setPointerCapture(e.pointerId);
@@ -63,10 +71,10 @@ export default function ExplodedTimeline() {
             dragging.current = false;
           }}
         >
-          <div className="absolute inset-y-0 left-0 rounded-full bg-[var(--navy)]" style={{ width: `${p * 100}%` }} />
-          <div
+          <motion.div className="absolute inset-y-0 left-0 rounded-full bg-[var(--navy)]" style={{ width: fillWidth }} />
+          <motion.div
             className="absolute top-1/2 h-3.5 w-3.5 -translate-y-1/2 -translate-x-1/2 rounded-full border-2 border-[var(--navy)] bg-white shadow"
-            style={{ left: `${p * 100}%` }}
+            style={{ left: fillWidth }}
           />
         </div>
       </div>

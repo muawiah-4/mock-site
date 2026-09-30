@@ -28,7 +28,7 @@ const CARDS = [
 
 export default function EditorialShowcase() {
   return (
-    <section className="hairline-grid-dark relative overflow-hidden bg-[#0a0a0b] px-6 py-20 md:py-28">
+    <section className="hairline-grid-dark relative overflow-hidden bg-dark px-6 py-20 md:py-28">
       <GhostHeading tone="light" align="center" className="top-6 opacity-60 md:top-10">
         DISCIPLINE
       </GhostHeading>

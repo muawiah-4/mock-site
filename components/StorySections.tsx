@@ -61,7 +61,7 @@ export default function StorySections() {
             whileInView={{ opacity: 1, y: 0, filter: "grayscale(0)" }}
             viewport={{ once: true, margin: "-15%" }}
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            className={`aspect-[4/3] overflow-hidden rounded-3xl shadow-[0_30px_80px_-40px_rgba(20,23,26,0.45)] ${
+            className={`aspect-[4/3] overflow-hidden rounded-3xl shadow-media ${
               i % 2 === 1 ? "md:order-2" : ""
             }`}
           >

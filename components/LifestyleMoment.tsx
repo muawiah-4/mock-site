@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 
-const LIFESTYLE_IMAGE = "/lifestyle/prx-lifestyle-red-hd.jpg";
+const LIFESTYLE_IMAGE = "/lifestyle/prx-lifestyle-red-hd.webp";
 
 /**
  * An emotional beat before the technical deep-dive — the source photo is
@@ -19,12 +19,16 @@ export default function LifestyleMoment() {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: "-10%" }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="relative aspect-square w-full overflow-hidden rounded-[2rem] shadow-[0_40px_100px_-40px_rgba(20,23,26,0.45)] md:order-2"
+          className="relative aspect-square w-full overflow-hidden rounded-[2rem] shadow-media md:order-2"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={LIFESTYLE_IMAGE}
             alt="A woman checking her Tissot watch by a lake"
+            width={1440}
+            height={1440}
+            loading="lazy"
+            decoding="async"
             className="h-full w-full object-cover"
           />
         </motion.div>
@@ -40,10 +44,10 @@ export default function LifestyleMoment() {
             Everyday Icon
           </div>
           <h3 className="text-gradient text-[clamp(1.8rem,3.4vw,2.6rem)] font-semibold leading-tight tracking-tight">
-            Built for more than the wrist it's on.
+            Built for more than the wrist it&rsquo;s on.
           </h3>
           <p className="mt-4 max-w-md text-[15px] leading-relaxed text-[var(--ink-600)]">
-            A watch is never just parts on a bracelet — it's the second glance mid-conversation, the
+            A watch is never just parts on a bracelet — it&rsquo;s the second glance mid-conversation, the
             quiet check before a meeting starts. Every Tissot is built for that moment, not just the
             display case.
           </p>

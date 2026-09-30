@@ -1,48 +1,63 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { WatchVariant } from "@/lib/catalog";
-import { CATALOG, getCollection, formatPrice } from "@/lib/catalog";
+import { CATALOG, getCollection, formatPrice, modelVariants } from "@/lib/catalog";
 import { useCart } from "@/lib/cart-context";
+import { track } from "@/lib/analytics";
 import Accordion from "@/components/Accordion";
 import ProductPhoto from "@/components/ProductPhoto";
 import MagneticButton from "@/components/MagneticButton";
+import { useDialogA11y } from "@/lib/use-dialog-a11y";
 
 export default function ProductDetail({ variant }: { variant: WatchVariant }) {
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const [zoomOpen, setZoomOpen] = useState(false);
   const { addToCart, open } = useCart();
+  const zoomRef = useRef<HTMLDivElement>(null);
+  const zoomCloseRef = useRef<HTMLButtonElement>(null);
+
+  useDialogA11y({
+    open: zoomOpen,
+    onClose: () => setZoomOpen(false),
+    containerRef: zoomRef,
+    initialFocusRef: zoomCloseRef,
+    lockScroll: true,
+  });
 
   const collection = getCollection(variant.collectionId);
+  const family = modelVariants(variant);
+  const showSize = new Set(family.map((v) => v.size.id)).size > 1;
   const siblings = CATALOG.filter((v) => v.slug !== variant.slug && v.collectionId === variant.collectionId);
 
   return (
-    <main>
+    <main className="bg-[var(--bg-0)]">
       <section className="px-6 pb-20 pt-28 md:px-10 md:pt-32">
         <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 md:grid-cols-2 md:gap-16">
           <motion.div
             initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            className="relative aspect-square w-full overflow-hidden rounded-[2rem] shadow-[0_30px_80px_-40px_rgba(20,23,26,0.45)] md:sticky md:top-24 md:h-[560px] md:aspect-auto"
+            className="relative aspect-square w-full overflow-hidden rounded-[2rem] shadow-media md:sticky md:top-24 md:h-[560px] md:aspect-auto"
           >
             {variant.heroImage ? (
               <button
                 type="button"
                 onClick={() => setZoomOpen(true)}
                 aria-label="Zoom product photo"
-                className="group relative block h-full w-full cursor-zoom-in"
+                className="group relative block h-full w-full cursor-zoom-in focus-visible:outline-offset-[-6px] focus-visible:rounded-[2rem]"
               >
                 <ProductPhoto
                   src={variant.heroImage}
                   alt={`${variant.name} — ${variant.dial.label}`}
                   padding="10%"
+                  priority
                   imgClassName="transition-transform duration-500 ease-out group-hover:scale-[1.06]"
                 />
-                <span className="pointer-events-none absolute bottom-4 right-4 flex items-center gap-1.5 rounded-full bg-white/80 px-3 py-1.5 text-[11px] font-medium text-[var(--ink-600)] opacity-0 shadow-sm backdrop-blur-md ring-1 ring-black/[0.04] transition-opacity group-hover:opacity-100">
+                <span className="pointer-events-none absolute bottom-4 right-4 flex items-center gap-1.5 rounded-full bg-white/80 px-3 py-1.5 text-[11px] font-medium text-[var(--ink-600)] opacity-0 shadow-sm backdrop-blur-md ring-1 ring-black/[0.04] transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
                     <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.8" />
                     <path d="M20 20L16.5 16.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
@@ -88,6 +103,47 @@ export default function ProductDetail({ variant }: { variant: WatchVariant }) {
               <p className="mt-5 max-w-md text-[15px] leading-relaxed text-[var(--ink-600)]">{variant.blurb}</p>
             </motion.div>
 
+            {family.length > 1 && (
+              <motion.nav
+                aria-label={`${variant.name} variants`}
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.42 }}
+                className="mt-7"
+              >
+                <p className="mb-3 text-[13px] font-medium text-[var(--ink-900)]">
+                  Dial{showSize && " & size"} — <span className="text-[var(--ink-400)]">{variant.dial.label}</span>
+                </p>
+                <ul className="flex flex-wrap gap-2">
+                  {family.map((v) => {
+                    const current = v.slug === variant.slug;
+                    return (
+                      <li key={v.slug}>
+                        <Link
+                          href={`/watch/${v.slug}`}
+                          aria-current={current ? "page" : undefined}
+                          scroll={false}
+                          className={`flex items-center gap-2 rounded-full border py-1.5 pl-1.5 pr-3.5 text-[12px] font-medium transition ${
+                            current
+                              ? "border-[var(--navy)] bg-[var(--navy)] text-white"
+                              : "border-black/10 bg-white/30 text-[var(--ink-600)] hover:border-black/20"
+                          }`}
+                        >
+                          <span
+                            aria-hidden="true"
+                            className="h-5 w-5 rounded-full ring-1 ring-black/10"
+                            style={{ background: v.dial.hex }}
+                          />
+                          {v.dial.label}
+                          {showSize && <span className={current ? "text-white/70" : "text-[var(--ink-400)]"}>{v.size.label}</span>}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </motion.nav>
+            )}
+
             <motion.div
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
@@ -114,11 +170,12 @@ export default function ProductDetail({ variant }: { variant: WatchVariant }) {
               <MagneticButton
                 onClick={() => {
                   addToCart(variant.slug, qty);
+                  track("add_to_bag", { source: "product_page", variant: variant.slug, quantity: qty });
                   setAdded(true);
                   setTimeout(() => open(), 300);
                 }}
                 className="btn-primary flex-1 rounded-full py-3.5 text-[14px] font-medium text-white transition-transform hover:scale-[1.01] active:scale-[0.99]"
-                strength={10}
+                maxOffsetPx={5}
               >
                 {added ? "Added ✓" : "Add to Bag"}
               </MagneticButton>
@@ -172,10 +229,11 @@ export default function ProductDetail({ variant }: { variant: WatchVariant }) {
       <AnimatePresence>
         {zoomOpen && variant.heroImage && (
           <motion.div
+            ref={zoomRef}
             role="dialog"
             aria-modal="true"
             aria-label={`${variant.name}, full size`}
-            className="fixed inset-0 z-[120] flex items-center justify-center bg-[#0d1013]/90 p-6 backdrop-blur-md md:p-16"
+            className="fixed inset-0 z-[120] flex items-center justify-center bg-dark/90 p-6 backdrop-blur-md md:p-16"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -196,9 +254,10 @@ export default function ProductDetail({ variant }: { variant: WatchVariant }) {
               />
             </motion.div>
             <button
+              ref={zoomCloseRef}
               onClick={() => setZoomOpen(false)}
               aria-label="Close zoom"
-              className="absolute right-5 top-5 rounded-full bg-white/10 p-2.5 text-white transition hover:bg-white/20"
+              className="absolute right-5 top-5 rounded-full bg-white/10 p-2.5 text-white transition hover:bg-white/20 focus-visible:outline-white"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
@@ -219,7 +278,7 @@ export default function ProductDetail({ variant }: { variant: WatchVariant }) {
                 <Link
                   key={s.slug}
                   href={`/watch/${s.slug}`}
-                  className="group flex flex-col overflow-hidden rounded-3xl border border-black/[0.06] bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_30px_70px_-30px_rgba(20,23,26,0.35)]"
+                  className="group flex flex-col overflow-hidden rounded-3xl border border-black/[0.06] bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-lift"
                 >
                   <span className="relative block aspect-square overflow-hidden bg-white">
                     {s.heroImage ? (
