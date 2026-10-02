@@ -24,6 +24,10 @@ export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Hovering opens Collections, so the click that follows the hover must not
+  // toggle it straight back shut — only a click on an already-clicked-open
+  // menu (or keyboard Enter/Space) closes it.
+  const openedByHover = useRef(false);
   const { count, open: openCart } = useCart();
 
   const mobileMenuRef = useRef<HTMLDivElement>(null);
@@ -67,6 +71,17 @@ export default function Header() {
 
   return (
     <>
+      {/* First Tab stop on the home page: keyboard users otherwise have to
+          page through ~6 viewports of scroll-driven sequence (and the whole
+          header) before reaching the rest of the page. */}
+      {pathname === "/" && (
+        <a
+          href="#after-intro"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-white focus:px-5 focus:py-2.5 focus:text-[13px] focus:font-medium focus:text-[var(--ink-900)] focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-[var(--navy)]"
+        >
+          Skip intro
+        </a>
+      )}
       <motion.header
         className={`fixed inset-x-0 top-0 ${mobileOpen ? "z-[86]" : "z-[60]"} flex h-16 items-center justify-between px-5 md:px-8`}
       >
@@ -105,6 +120,7 @@ export default function Header() {
               className="relative"
               onMouseEnter={() => {
                 cancelClose();
+                if (openMenu !== "Collections") openedByHover.current = true;
                 setOpenMenu("Collections");
               }}
               onMouseLeave={scheduleClose}
@@ -113,7 +129,14 @@ export default function Header() {
               }}
             >
               <button
-                onClick={() => setOpenMenu(openMenu === "Collections" ? null : "Collections")}
+                onClick={() => {
+                  if (openedByHover.current && openMenu === "Collections") {
+                    openedByHover.current = false;
+                    return;
+                  }
+                  openedByHover.current = false;
+                  setOpenMenu(openMenu === "Collections" ? null : "Collections");
+                }}
                 aria-expanded={openMenu === "Collections"}
                 aria-controls="collections-menu"
                 className="flex items-center gap-1 px-3 py-2 text-[13px] font-medium text-[var(--ink-600)] transition hover:text-[var(--ink-900)]"
