@@ -15,6 +15,13 @@ export default function CartSidebar() {
 
   useDialogA11y({ open: isOpen, onClose: close, containerRef: panelRef, initialFocusRef: closeRef, lockScroll: true });
 
+  // Removing a line unmounts the button that had focus, which would drop
+  // focus to <body> (outside the modal) — keep it inside on the close button.
+  const removeLine = (slug: string) => {
+    removeFromCart(slug);
+    closeRef.current?.focus();
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -93,7 +100,7 @@ export default function CartSidebar() {
                           <div className="flex items-center rounded-full border border-black/10">
                             <button
                               aria-label="Decrease quantity"
-                              onClick={() => setQuantity(slug, quantity - 1)}
+                              onClick={() => (quantity <= 1 ? removeLine(slug) : setQuantity(slug, quantity - 1))}
                               className="px-3 py-1 text-[14px] text-[var(--ink-600)] transition hover:text-[var(--ink-900)]"
                             >
                               −
@@ -110,7 +117,7 @@ export default function CartSidebar() {
                             </button>
                           </div>
                           <button
-                            onClick={() => removeFromCart(slug)}
+                            onClick={() => removeLine(slug)}
                             className="text-[12px] text-[var(--ink-400)] underline underline-offset-2 transition hover:text-[var(--ink-900)]"
                           >
                             Remove
