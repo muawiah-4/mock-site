@@ -231,14 +231,6 @@ export default function Experience({ children }: { children?: ReactNode }) {
 
   return (
     <ScrollControlContext.Provider value={{ progress: scrollYProgress, scrollToFraction }}>
-      {/* Keyboard users otherwise have to page through ~6 viewports of
-          scroll-driven sequence to reach the rest of the page. */}
-      <a
-        href="#after-intro"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-white focus:px-5 focus:py-2.5 focus:text-[13px] focus:font-medium focus:text-[var(--ink-900)] focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-[var(--navy)]"
-      >
-        Skip intro
-      </a>
       <div ref={containerRef} style={{ height: `${SEQUENCE_LENGTH_VH}vh` }} className="relative">
         <div ref={stickyRef} className="sticky top-0 h-screen w-full overflow-hidden">
           <div className="viewport-vignette absolute inset-0" />
